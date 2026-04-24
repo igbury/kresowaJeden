@@ -5,6 +5,7 @@ $error = null;
 $loginSuccess = false;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if($_POST["action"] === "login"){
     if (!empty($_POST["email"]) && !empty($_POST["pswd"])) {
         $conn = mysqli_connect("localhost", "root", "y", "kresowaJeden");
 
@@ -35,7 +36,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
         $error = "Musisz wpisać swoje dane!";
     }
+}else if($_POST["action"]==="register"){
+        if (!empty($_POST["name"])&&!empty($_POST["email"])&&!empty($_POST["pswd"]) && !empty($_POST["phone"])) {
+            $conn = mysqli_connect("localhost", "root", "y", "kresowaJeden");
+            $name = mysqli_real_escape_string($conn, $_POST["name"]);
+            $email = mysqli_real_escape_string($conn, $_POST["email"]);
+            $password = mysqli_real_escape_string($conn, password_hash($_POST["pswd"], PASSWORD_DEFAULT));
+            $phone = mysqli_real_escape_string($conn, $_POST["phone"]);
+            $sql = "SELECT email FROM klienci WHERE email = '$email'";
+            $validate = mysqli_query($conn, $sql);
+            if ($validate && mysqli_num_rows($validate) > 0) {
+                echo "<p>Istnieje już użytkownik o tym loginie!</p>";
+            } else {
+                $newUser = "INSERT INTO klienci VALUES(null, '$name', '$password','$email', '$phone')";
+                $addUser = mysqli_query($conn, $newUser);
+                echo "<p>Zostałeś zarejestrowany! Kliknij <a href='login.php'>tutaj</a>, aby się zalogować.";
+            }
+        } else {
+            echo "<p>Musisz wpisać swoje dane!.</p>";
+        }
+    }
 }
+
 ?>!-->
 <!DOCTYPE html>
 <html lang="pl">
@@ -106,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </main>
 
-    <!-- MODAL LOGOWANIA -->
+<!-- MODAL LOGOWANIA -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -114,15 +136,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <h4 class="modal-title" id="loginModalLabel">Zaloguj się</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+
+                <!-- FORMULARZ LOGOWANIA -->
                 <form action="" method="POST">
+                    <input type="hidden" name="action" value="login">
                     <div class="modal-body">
-
-                        <!--<?php if ($error): ?>
-                            <div class="alert alert-danger py-2 px-3 mb-3" role="alert">
-                                <?= htmlspecialchars($error) ?>
-                            </div>
-                        <?php endif; ?>!-->
-
                         <div class="form-floating mb-3">
                             <input type="email" class="form-control" id="email" name="email" placeholder="Wpisz email">
                             <label for="email">Email</label>
@@ -130,12 +148,59 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <div class="form-floating mb-3">
                             <input type="password" class="form-control" id="pswd" name="pswd" placeholder="Wpisz hasło">
                             <label for="pswd">Hasło</label>
-                        </div>
+                        </div>                   
+                            <a href="#" class="d-block text-center m-1 p-1 border rounded-1 border-primary lead text-decoration-none text-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                Zarejestruj się.
+                            </a>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Zaloguj</button>
+                        <button type="reset" class="btn btn-danger">Resetuj</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
+
+<!-- MODAL REJESTRACJI -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="registerModalLabel">Zarejestruj się</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+
+                <!-- FORMULARZ REJESTRACJI -->
+                <form action="" method="POST">
+                    <input type="hidden" name="action" value="register">
+                    <div class="modal-body">
+
+                        <div class="form-floating mb-3">
+                            <input type="name" class="form-control" id="name" name="name" placeholder="Wpisz swoje imie">
+                            <label for="name">Imie</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Wpisz email">
+                            <label for="email">Email</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="pswd" name="pswd" placeholder="Wpisz hasło">
+                            <label for="pswd">Hasło</label>
+                        </div>                        
+                        <div class="form-floating mb-3">
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Wpisz numer telefonu">
+                            <label for="phone">Numer Telefonu</label>
+                        </div>
+                        <a href="#" class="d-block text-center m-1 p-1 border rounded-1 border-primary lead text-decoration-none text-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            Zaloguj się
+                        </a>                  
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Zaloguj</button>
+                        <button type="submit" class="btn btn-success">Zarejestruj</button>
                         <button type="reset" class="btn btn-danger">Resetuj</button>
                     </div>
                 </form>
@@ -166,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var toastEl = document.getElementById('loginToast');
     var toast = new bootstrap.Toast(toastEl, {
-        delay: 1000
+        delay: 3000
     });
     toast.show();
 });
