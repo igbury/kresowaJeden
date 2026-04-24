@@ -1,10 +1,20 @@
-*{
-    margin: 0;
+/* Styl domyślny (telefony) 200+%*/
+#mainImage img{
+    max-width: 250px;
+    background-color: red;
 }
-nav li{
-    list-style: none;
+
+/* Tablety i większe (ekrany powyżej 768px) <150;200>%*/
+@media (min-width: 768px) {
+    #mainImage img{
+        max-width: 300px;
+        background-color: green;
+    }
 }
-li a{
-    text-decoration: none;
-    color: 
+
+/* Ekrany komputerów (powyżej 1024px) <150%*/
+@media (min-width: 1025px) {
+    #mainImage img{
+        max-width: 400px;
+    }
 }
