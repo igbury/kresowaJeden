@@ -28,9 +28,21 @@ unset($_SESSION["succ"]);
                     <li class="nav-item"><a href="#" class="nav-link">Lorem.</a></li>
                     <li class="nav-item"><a href="#" class="nav-link">Lorem.</a></li>
                     <li class="nav-item"><a href="#" class="nav-link">Lorem.</a></li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
-                    </li>
+                    <?php
+                        if(isset($_SESSION['user'])){
+                            echo '
+                                <li class="nav-item">
+                                    <a href="logout.php" class="nav-link">Wyloguj.</a>
+                                </li>
+                            ';
+                        }else{
+                            echo '
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
+                                </li>
+                            ';
+                        }                        
+                    ?>
                 </ul>
             </div>
         </nav>
@@ -41,6 +53,11 @@ unset($_SESSION["succ"]);
         <div class="container-fluid text-light py-5 mx-0 my-5 d-flex align-items-center">
             <div class="container bg- mx-5">
                 <h2 class="m-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt, eius.</h2>
+                <?php
+                    if(isset($_SESSION['user'])){
+                        echo '<h5>Zalogowany: '.$_SESSION['user'].'</h5>';
+                    }
+                ?>
                 <button class="btn btn-outline-danger mx-5 my-3 ">Zobacz Menu</button>
                 <button class="btn btn-outline-light">Zarezerwuj Stolik</button>
                 <hr class="my-5">
@@ -87,7 +104,6 @@ unset($_SESSION["succ"]);
 
                 <!-- FORMULARZ LOGOWANIA -->
                 <form action="login.php" method="POST">
-                    <input type="hidden" name="action" value="login">
                     <div class="modal-body">
                         <div class="form-floating mb-3">
                             <input type="email" class="form-control" id="email" name="email" placeholder="Wpisz email">
@@ -123,7 +139,6 @@ unset($_SESSION["succ"]);
 
                 <!-- FORMULARZ REJESTRACJI -->
                 <form action="register.php" method="POST">
-                    <input type="hidden" name="action" value="register">
                     <div class="modal-body">
 
                         <div class="form-floating mb-3">
@@ -167,7 +182,6 @@ unset($_SESSION["succ"]);
 
                 <!-- FORMULARZ OCEN -->
                 <form action="" method="POST">
-                    <input type="hidden" name="action" value="login">
                     <div class="modal-body">
                         <div class="form-floating mb-3">
                             <input type="email" class="form-control" id="email" name="email" placeholder="Wpisz email">
@@ -190,7 +204,7 @@ unset($_SESSION["succ"]);
         </div>
     </div>    
                 <!-- TOAST ERROR -->
-                <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
                     <?php if ($error): ?>
                     <div id="loginToastERR" class="toast align-items-center text-bg-danger border-0" role="alert">
                         <div class="d-flex">
@@ -203,7 +217,7 @@ unset($_SESSION["succ"]);
                     <?php endif; ?>
                 </div>
                 <!-- TOAST SUCCESS -->
-                <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
                     <?php if ($succ): ?>
                     <div id="loginToastSUCC" class="toast align-items-center text-bg-success border-0" role="alert">
                         <div class="d-flex">

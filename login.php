@@ -7,7 +7,9 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 if (!empty($_POST["email"]) && !empty($_POST["pswd"])) {
 
     if (!$conn) {
-        $error = "Błąd połączenia z bazą danych.";
+            $_SESSION["error"] = "Błąd połączenia z bazą danych.";
+            header("Location: index.php");
+            exit();
     } else {
         $email = mysqli_real_escape_string($conn, $_POST["email"]);
         $password = $_POST["pswd"];
@@ -20,8 +22,6 @@ if (!empty($_POST["email"]) && !empty($_POST["pswd"])) {
             if (password_verify($password, $row['haslo'])) {
                 $_SESSION['user'] = $email;
                 $_SESSION["succ"] = "Zalogowano!";
-                header("Location: index.php");
-                exit();
                 header("Location: index.php");
                 exit();
             } else {
