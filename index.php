@@ -1,64 +1,12 @@
-<!--<?php
+<?php
 session_start();
 
-$error = null;
-$loginSuccess = false;
+$error = $_SESSION["error"] ?? null;
+$succ = $_SESSION["succ"] ?? null;
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if($_POST["action"] === "login"){
-    if (!empty($_POST["email"]) && !empty($_POST["pswd"])) {
-        $conn = mysqli_connect("localhost", "root", "y", "kresowaJeden");
-
-        if (!$conn) {
-            $error = "Błąd połączenia z bazą danych.";
-        } else {
-            $email    = mysqli_real_escape_string($conn, $_POST["email"]);
-            $password = $_POST["pswd"];
-
-            $sql      = "SELECT email, haslo FROM klienci WHERE email = '$email'";
-            $result   = mysqli_query($conn, $sql);
-
-            if ($result && mysqli_num_rows($result) > 0) {
-                $row = mysqli_fetch_assoc($result);
-                if (password_verify($password, $row['haslo'])) {
-                    $_SESSION['user'] = $email;
-                    header("Location: test.html");
-                    exit;
-                } else {
-                    $error = "Niepoprawne hasło lub login!";
-                }
-            } else {
-                $error = "Niepoprawne hasło lub login!";
-            }
-
-            mysqli_close($conn);
-        }
-    } else {
-        $error = "Musisz wpisać swoje dane!";
-    }
-}else if($_POST["action"]==="register"){
-        if (!empty($_POST["name"])&&!empty($_POST["email"])&&!empty($_POST["pswd"]) && !empty($_POST["phone"])) {
-            $conn = mysqli_connect("localhost", "root", "y", "kresowaJeden");
-            $name = mysqli_real_escape_string($conn, $_POST["name"]);
-            $email = mysqli_real_escape_string($conn, $_POST["email"]);
-            $password = mysqli_real_escape_string($conn, password_hash($_POST["pswd"], PASSWORD_DEFAULT));
-            $phone = mysqli_real_escape_string($conn, $_POST["phone"]);
-            $sql = "SELECT email FROM klienci WHERE email = '$email'";
-            $validate = mysqli_query($conn, $sql);
-            if ($validate && mysqli_num_rows($validate) > 0) {
-                echo "<p>Istnieje już użytkownik o tym loginie!</p>";
-            } else {
-                $newUser = "INSERT INTO klienci VALUES(null, '$name', '$password','$email', '$phone')";
-                $addUser = mysqli_query($conn, $newUser);
-                echo "<p>Zostałeś zarejestrowany! Kliknij <a href='login.php'>tutaj</a>, aby się zalogować.";
-            }
-        } else {
-            echo "<p>Musisz wpisać swoje dane!.</p>";
-        }
-    }
-}
-
-?>!-->
+unset($_SESSION["error"]);
+unset($_SESSION["succ"]);
+?>
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -138,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
 
                 <!-- FORMULARZ LOGOWANIA -->
-                <form action="" method="POST">
+                <form action="login.php" method="POST">
                     <input type="hidden" name="action" value="login">
                     <div class="modal-body">
                         <div class="form-floating mb-3">
@@ -174,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
                 <!-- FORMULARZ REJESTRACJI -->
-                <form action="" method="POST">
+                <form action="register.php" method="POST">
                     <input type="hidden" name="action" value="register">
                     <div class="modal-body">
 
@@ -207,10 +155,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </div>
     </div>
-                <!-- TOAST -->
+
+<!-- MODAL OCENY -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="loginModalLabel">Zaloguj się</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- FORMULARZ OCEN -->
+                <form action="" method="POST">
+                    <input type="hidden" name="action" value="login">
+                    <div class="modal-body">
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Wpisz email">
+                            <label for="email">Email</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="pswd" name="pswd" placeholder="Wpisz hasło">
+                            <label for="pswd">Hasło</label>
+                        </div>                   
+                            <a href="#" class="d-block text-center m-1 p-1 border rounded-1 border-primary lead text-decoration-none text-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                Zarejestruj się.
+                            </a>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Zaloguj</button>
+                        <button type="reset" class="btn btn-danger">Resetuj</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>    
+                <!-- TOAST ERROR -->
                 <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
                     <?php if ($error): ?>
-                    <div id="loginToast" class="toast align-items-center text-bg-danger border-0" role="alert">
+                    <div id="loginToastERR" class="toast align-items-center text-bg-danger border-0" role="alert">
                         <div class="d-flex">
                             <div class="toast-body">
                                 <?= htmlspecialchars($error) ?>
@@ -219,7 +201,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         </div>
                     </div>
                     <?php endif; ?>
-            </div>
+                </div>
+                <!-- TOAST SUCCESS -->
+                <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
+                    <?php if ($succ): ?>
+                    <div id="loginToastSUCC" class="toast align-items-center text-bg-success border-0" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <?= htmlspecialchars($succ) ?>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>                
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 
@@ -229,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var modal = new bootstrap.Modal(document.getElementById('loginModal'));
     modal.show();
 
-    var toastEl = document.getElementById('loginToast');
+    var toastEl = document.getElementById('loginToastERR');
     var toast = new bootstrap.Toast(toastEl, {
         delay: 3000
     });
@@ -237,6 +232,16 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 <?php endif; ?>
-
+<?php if ($succ): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var toastEl = document.getElementById('loginToastSUCC');
+    var toast = new bootstrap.Toast(toastEl, {
+        delay: 3000
+    });
+    toast.show();
+});
+</script>
+<?php endif; ?>
 </body>
 </html>

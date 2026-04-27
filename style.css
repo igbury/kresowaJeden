@@ -5,14 +5,12 @@ tymczasowe do testowania styli wzgledem rozdzielczosci
 /* Styl domyślny (telefony) 200+%*/
 #mainImage img{
     max-width: 250px;
-    background-color: red;
 }
 
 /* Tablety i większe (ekrany powyżej 768px) <150;200>%*/
 @media (min-width: 768px) {
     #mainImage img{
         max-width: 300px;
-        background-color: green;
     }
 }
 
