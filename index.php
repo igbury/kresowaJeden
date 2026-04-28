@@ -3,7 +3,10 @@ session_start();
 require 'db.php';
 $error = $_SESSION["error"] ?? null;
 $succ = $_SESSION["succ"] ?? null;
+$error_modal = $_SESSION["error_modal"] ?? "loginModal";
 
+
+unset($_SESSION["error_modal"]);
 unset($_SESSION["error"]);
 unset($_SESSION["succ"]);
 ?>
@@ -66,7 +69,7 @@ unset($_SESSION["succ"]);
                 <h2 class="m-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt, eius.</h2>
                 <?php
                     if(isset($_SESSION['user'])){
-                        echo '<h5>Zalogowany: '.$_SESSION['user'].'</h5>';
+                        echo "<h5>Zalogowany: ({$_SESSION['id']}) {$_SESSION['user']} </h5>";
                     }
                 ?>
                 <button class="btn btn-outline-danger mx-5 my-3 ">Zobacz Menu</button>
@@ -118,11 +121,11 @@ unset($_SESSION["succ"]);
                 <form action="login.php" method="POST">
                     <div class="modal-body">
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Wpisz email">
+                            <input type="email" class="form-control" id="email" name="email" placeholder=" ">
                             <label for="email">Email</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="pswd" name="pswd" placeholder="Wpisz hasło">
+                            <input type="password" class="form-control" id="pswd" name="pswd" placeholder=" ">
                             <label for="pswd">Hasło</label>
                         </div>                   
                             <a href="#" class="d-block text-center m-1 p-1 border rounded-1 border-primary lead text-decoration-none text-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
@@ -154,19 +157,19 @@ unset($_SESSION["succ"]);
                     <div class="modal-body">
 
                         <div class="form-floating mb-3">
-                            <input type="name" class="form-control" id="name" name="name" placeholder="Wpisz swoje imie">
+                            <input type="name" class="form-control" id="name" name="name" placeholder=" ">
                             <label for="name">Imie</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Wpisz email">
+                            <input type="email" class="form-control" id="email" name="email" placeholder=" ">
                             <label for="email">Email</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="pswd" name="pswd" placeholder="Wpisz hasło">
+                            <input type="password" class="form-control" id="pswd" name="pswd" placeholder=" ">
                             <label for="pswd">Hasło</label>
                         </div>                        
                         <div class="form-floating mb-3">
-                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Wpisz numer telefonu">
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder=" ">
                             <label for="phone">Numer Telefonu</label>
                         </div>
                         <a href="#" class="d-block text-center m-1 p-1 border rounded-1 border-primary lead text-decoration-none text-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
@@ -195,24 +198,27 @@ unset($_SESSION["succ"]);
                 <!-- FORMULARZ OCEN -->
                 <form action="ocen.php" method="POST">
                     <div class="modal-body">
-                        <div class="form-floating mb-3">
-                            <select name="danie" id="danie">
-                                <?php
-                                    $z1 = "SELECT nazwaPotrawy FROM menu;";
-                                    $resoult = mysqli_query($conn,$z1);
-                                    while($wiersz = mysqli_fetch_row($resoult)){
-                                        echo "<option>".$wiersz[0]."</option>";
-                                    }
-                                ?>
-                            </select>
+                        <div class="mb-3">
+                            <label for="danie">
+                                <p>Wybierz danie.</p>
+                                <select class="form-select" name="danie" id="danie">
+                                    <?php
+                                        $z1 = "SELECT id,nazwaPotrawy FROM menu;";
+                                        $result = mysqli_query($conn,$z1);
+                                        while($row = mysqli_fetch_assoc($result)){
+                                            echo "<option value='{$row['id']}'>{$row['nazwaPotrawy']}</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="ocena" name="ocena" placeholder="Podaj liczbe gwiazdek" min="0" max="5">
-                            <label for="ocena">Ocena</label>
+                            <input type="number" require class="form-control" id="ocena" name="ocena" placeholder=" " min="1" max="5">
+                            <label for="ocena">Ocena (1-5)</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="recenzja" name="recenzja" placeholder="Opis">
-                            <label for="recenzja">Recenzja</label>
+                            <input type="text" class="form-control" id="recenzja" name="recenzja" placeholder=" ">
+                            <label for="recenzja">Komentarz</label>
                         </div>                     
 
                     </div>
@@ -255,13 +261,11 @@ unset($_SESSION["succ"]);
 <?php if ($error): ?>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var modal = new bootstrap.Modal(document.getElementById('loginModal'));
+    var modal = new bootstrap.Modal(document.getElementById('<?= $error_modal ?>'));
     modal.show();
 
     var toastEl = document.getElementById('loginToastERR');
-    var toast = new bootstrap.Toast(toastEl, {
-        delay: 3000
-    });
+    var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
     toast.show();
 });
 </script>
