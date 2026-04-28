@@ -13,15 +13,19 @@ if (!empty($_POST["name"])&&!empty($_POST["email"])&&!empty($_POST["pswd"]) && !
     $sql = "SELECT email FROM klienci WHERE email = '$email'";
     $validate = mysqli_query($conn, $sql);
     if ($validate && mysqli_num_rows($validate) > 0) {
-        echo "<p>Istnieje już użytkownik o tym loginie!</p>";
+            $_SESSION["error"] = "Uzytkownik o tym loginie juz isniteje.";
+            header("Location: index.php");
+            exit();
     } else {
         $newUser = "INSERT INTO klienci VALUES(null, '$name', '$password','$email', '$phone')";
             $addUser = mysqli_query($conn, $newUser);
-        echo "<p>Zostałeś zarejestrowany! Kliknij <a href='login.php'>tutaj</a>, aby się zalogować.";
-        header("Location: index.php");
-        exit();
+                $_SESSION["succ"] = "Zarejestrowano!";
+                header("Location: index.php");
+                exit();
     }
 } else {
-    echo "<p>Musisz wpisać swoje dane!.</p>";
+            $_SESSION["error"] = "Musisz wypelnic dane.";
+            header("Location: index.php");
+            exit();
 }
 ?>

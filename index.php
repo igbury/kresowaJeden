@@ -15,36 +15,48 @@ unset($_SESSION["succ"]);
     <title>KresowaJeden</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-</head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- https://icons.getbootstrap.com/ -->
+</head>    
 <body class="bg-dark">
-
     <!-- NAVBAR -->
     <header>
         <nav class="navbar navbar-expand-sm border border-secondary bg-dark navbar-dark fixed-top">
             <div class="container-fluid">
                 <h3 class="navbar-text">KresowaJeden</h3>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item border"><a href="#" class="nav-link active">Lorem.</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Lorem.</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Lorem.</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Lorem.</a></li>
+                <ul class="navbar-nav ms-auto border rounded-2 px-2">
+                    <li class="nav-item mx-3 my-1"><a href="#" class="nav-link active">Lorem.</a></li>
+                    <li class="nav-item mx-3 my-1"><a href="#" class="nav-link">Lorem.</a></li>
+                    <li class="nav-item mx-3 my-1"><a href="#" class="nav-link">Lorem.</a></li>
+                    <li class="nav-item mx-3 my-1"><a href="#" class="nav-link">Lorem.</a></li>
+                </ul>
+                <ul class="navbar-nav ms-auto border rounded-2">
                     <?php
                         if(isset($_SESSION['user'])){
                             echo '
-                                <li class="nav-item">
-                                    <a href="logout.php" class="nav-link">Wyloguj.</a>
+                                <li class="nav-item border border-danger mx-3">
+                                    <a href="logout.php" class="nav-link text-white">Wyloguj.</a>
                                 </li>
+                                    <li class="nav-item mx-3">
+                                    <a href="#" class="nav-link active"><i class="bi bi-cart"></i></a>
+                                </li>
+                                
                             ';
                         }else{
                             echo '
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
                                 </li>
+                                    <li class="nav-item mx-3">
+                                    <a href="#" class="nav-link"><i class="bi bi-cart"></i></a>
+                                </li>  
+                                <li class="nav-item mx-3">
+                                    <a href="#" class="nav-link text-white" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
+                                </li>                              
                             ';
                         }                        
-                    ?>
-                </ul>
+                    ?>                    
+                </ul>            
             </div>
+            
         </nav>
     </header>
 
@@ -86,7 +98,7 @@ unset($_SESSION["succ"]);
             <div class="container text-center">
                 <h3 class="text-danger d-flex align-items-center justify-content-center gap-3">
                     <span class="display-6">V</span>
-                    <span>Dania dnia</span>
+                    <span>Dania dnia</span> 
                     <span class="display-6">V</span>
                 </h3>
             </div>
