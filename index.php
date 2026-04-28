@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+require 'db.php';
 $error = $_SESSION["error"] ?? null;
 $succ = $_SESSION["succ"] ?? null;
 
@@ -44,14 +44,13 @@ unset($_SESSION["succ"]);
                             ';
                         }else{
                             echo '
-                                </li>
-                                    <li class="nav-item mx-3">
-                                    <a href="#" class="nav-link"><i class="bi bi-cart"></i></a>
-                                </li>  
-                                <li class="nav-item mx-3">
-                                    <a href="#" class="nav-link text-white" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
-                                </li>                              
-                            ';
+    <li class="nav-item mx-3">
+        <a href="#" class="nav-link"><i class="bi bi-cart"></i></a>
+    </li>  
+    <li class="nav-item mx-3">
+        <a href="#" class="nav-link text-white" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
+    </li>                              
+';
                         }                        
                     ?>                    
                 </ul>            
@@ -72,6 +71,7 @@ unset($_SESSION["succ"]);
                 ?>
                 <button class="btn btn-outline-danger mx-5 my-3 ">Zobacz Menu</button>
                 <button class="btn btn-outline-light">Zarezerwuj Stolik</button>
+                <button class="btn btn-outline-danger mx-5" data-bs-toggle="modal" data-bs-target="#ocenaModal">Ocen danie</button>
                 <hr class="my-5">
                 <div class="row text-center border border-secondary">
                     <div class="col border border-secondary p-3">
@@ -184,32 +184,40 @@ unset($_SESSION["succ"]);
     </div>
 
 <!-- MODAL OCENY -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal fade" id="ocenaModal" tabindex="-1" aria-labelledby="ocenaModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="loginModalLabel">Zaloguj się</h4>
+                    <h4 class="modal-title" id="ocenaModalLabel">Ocen danie</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <!-- FORMULARZ OCEN -->
-                <form action="" method="POST">
+                <form action="ocen.php" method="POST">
                     <div class="modal-body">
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Wpisz email">
-                            <label for="email">Email</label>
+                            <select name="danie" id="danie">
+                                <?php
+                                    $z1 = "SELECT nazwaPotrawy FROM menu;";
+                                    $resoult = mysqli_query($conn,$z1);
+                                    while($wiersz = mysqli_fetch_row($resoult)){
+                                        echo "<option>".$wiersz[0]."</option>";
+                                    }
+                                ?>
+                            </select>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="pswd" name="pswd" placeholder="Wpisz hasło">
-                            <label for="pswd">Hasło</label>
-                        </div>                   
-                            <a href="#" class="d-block text-center m-1 p-1 border rounded-1 border-primary lead text-decoration-none text-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
-                                Zarejestruj się.
-                            </a>
+                            <input type="number" class="form-control" id="ocena" name="ocena" placeholder="Podaj liczbe gwiazdek" min="0" max="5">
+                            <label for="ocena">Ocena</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="recenzja" name="recenzja" placeholder="Opis">
+                            <label for="recenzja">Recenzja</label>
+                        </div>                     
+
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Zaloguj</button>
-                        <button type="reset" class="btn btn-danger">Resetuj</button>
+                        <button type="submit" class="btn btn-success">Dodaj ocene</button>
                     </div>
                 </form>
             </div>
