@@ -1,6 +1,9 @@
 <?php
-require_once 'db.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
+require_once 'db.php';
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit();
 }
@@ -13,8 +16,7 @@ if (!empty($_POST["email"]) && !empty($_POST["pswd"])) {
     } else {
         $email = mysqli_real_escape_string($conn, $_POST["email"]);
         $password = $_POST["pswd"];
-
-        $sql = "SELECT idKlienta, email, haslo FROM klienci WHERE email = '$email'";
+        $sql = "SELECT idKlienta, email, haslo, isAdmin FROM klienci WHERE email = '$email'";
         $result = mysqli_query($conn, $sql);
 
         if ($result && mysqli_num_rows($result) > 0) {
@@ -22,6 +24,7 @@ if (!empty($_POST["email"]) && !empty($_POST["pswd"])) {
             if (password_verify($password, $row['haslo'])) {
                 $_SESSION['id'] = $row['idKlienta'];
                 $_SESSION['user'] = $email;
+                $_SESSION['isAdmin'] = (isset($row['isAdmin']) && $row['isAdmin'] == 1);
                 $_SESSION["succ"] = "Zalogowano!";
                 header("Location: index.php");
                 exit();

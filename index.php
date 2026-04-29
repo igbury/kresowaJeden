@@ -26,34 +26,64 @@ unset($_SESSION["succ"]);
     <header>
         <nav class="navbar navbar-expand-sm border border-secondary bg-dark navbar-dark fixed-top">
             <div class="container-fluid">
-                <h3 class="navbar-text">KresowaJeden</h3>
-                <ul class="navbar-nav ms-auto border rounded-2 px-2">
-                    <li class="nav-item mx-3 my-1"><a href="#" class="nav-link active">Lorem.</a></li>
-                    <li class="nav-item mx-3 my-1"><a href="#" class="nav-link">Lorem.</a></li>
-                    <li class="nav-item mx-3 my-1"><a href="#" class="nav-link">Lorem.</a></li>
-                    <li class="nav-item mx-3 my-1"><a href="#" class="nav-link">Lorem.</a></li>
-                </ul>
-                <ul class="navbar-nav ms-auto border rounded-2">
+                <h3 class="navbar-text  mx-2 my-1">KresowaJeden</h3>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item mx-3 my-1">
+                        <a href="#" class="btn btn-outline-success">Home</a>
+                    </li>
+                    <li class="nav-item mx-3 my-1">
+                        <a href="#" class="btn btn-outline-success">Menu</a>
+                </li>
                     <?php
-                        if(isset($_SESSION['user'])){
+                        if($_SESSION['isAdmin']==true){
                             echo '
-                                <li class="nav-item border border-danger mx-3">
-                                    <a href="logout.php" class="nav-link text-white">Wyloguj.</a>
+                                <li class="nav-item mx-3 my-1">
+                                    <div class="dropend">
+                                        <a class="btn btn-outline-danger dropdown-toggle" role="button" data-bs-theme="dark" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Panel Administratora
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-dark">
+                                            <li><a class="dropdown-item" href="modifyMenu.php">Modyfikuj menu</a></li>
+                                            <li><a class="dropdown-item disabled" href="#">Zarządzaj pracownikami</a></li>
+                                            <li><a class="dropdown-item disabled" href="#">Zarządzaj restauracją</a></li>
+                                        </ul>
+                                    </div>
                                 </li>
-                                    <li class="nav-item mx-3">
-                                    <a href="#" class="nav-link active"><i class="bi bi-cart"></i></a>
-                                </li>
-                                
                             ';
                         }else{
                             echo '
-    <li class="nav-item mx-3">
-        <a href="#" class="nav-link"><i class="bi bi-cart"></i></a>
-    </li>  
-    <li class="nav-item mx-3">
-        <a href="#" class="nav-link text-white" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
-    </li>                              
-';
+                                <li class="nav-item mx-3 my-1">
+                                    <a href="#" class="btn btn-outline-success">Rezerwacja</a>
+                                </li>  
+                                <li class="nav-item mx-3 my-1">
+                                    <a href="#" class="btn btn-outline-success">Kontakt</a>
+                                </li>                                                           
+                            ';
+                        }                        
+                    ?>       
+
+
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <?php
+                        if(isset($_SESSION['user'])){
+                            echo '
+                                <li class="nav-item mx-2 my-1">
+                                    <a href="#" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
+                                </li>                            
+                                <li class="nav-item mx-2 my-1">
+                                    <a href="logout.php" class="btn btn-outline-danger">Wyloguj.</a>
+                                </li>
+                            ';
+                        }else{
+                            echo '
+                                <li class="nav-item mx-2 my-1">
+                                    <a href="#" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
+                                </li>  
+                                <li class="nav-item mx-2 my-1">
+                                    <a href="#" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
+                                </li>                              
+                            ';
                         }                        
                     ?>                    
                 </ul>            
@@ -70,6 +100,9 @@ unset($_SESSION["succ"]);
                 <?php
                     if(isset($_SESSION['user'])){
                         echo "<h5>Zalogowany: ({$_SESSION['id']}) {$_SESSION['user']} </h5>";
+                        if($_SESSION['isAdmin']==true){
+                            echo "<p>Admin</p>";
+                        }
                     }
                 ?>
                 <button class="btn btn-outline-danger mx-5 my-3 ">Zobacz Menu</button>
@@ -155,7 +188,7 @@ unset($_SESSION["succ"]);
                 <!-- FORMULARZ REJESTRACJI -->
                 <form action="register.php" method="POST">
                     <div class="modal-body">
-
+SELECT * FROM `klienci`
                         <div class="form-floating mb-3">
                             <input type="name" class="form-control" id="name" name="name" placeholder=" ">
                             <label for="name">Imie</label>

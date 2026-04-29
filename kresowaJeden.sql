@@ -39,11 +39,13 @@ CREATE TABLE `alergeny` (
 --
 
 CREATE TABLE `klienci` (
-  `id` int(11) NOT NULL,
+  `idKlienta` int(11) NOT NULL,
   `imie` text NOT NULL,
   `haslo` text NOT NULL,
   `email` text NOT NULL,
-  `nr_telefonu` varchar(20) NOT NULL
+  `nr_telefonu` varchar(20) NOT NULL,
+  `isAdmin` boolean NOT NULL
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -163,7 +165,7 @@ ALTER TABLE `alergeny`
 -- Indeksy dla tabeli `klienci`
 --
 ALTER TABLE `klienci`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`idKlienta`);
 
 --
 -- Indeksy dla tabeli `menu`
@@ -234,7 +236,7 @@ ALTER TABLE `alergeny`
 -- AUTO_INCREMENT dla tabeli `klienci`
 --
 ALTER TABLE `klienci`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idKlienta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT dla tabeli `menu`
@@ -293,7 +295,7 @@ ALTER TABLE `menu_alergeny`
 -- Ograniczenia dla tabeli `oceny`
 --
 ALTER TABLE `oceny`
-  ADD CONSTRAINT `fk_oceny_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`id`),
+  ADD CONSTRAINT `fk_oceny_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`),
   ADD CONSTRAINT `fk_oceny_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`);
 
 --
@@ -307,13 +309,13 @@ ALTER TABLE `pozycje_zamowienia`
 -- Ograniczenia dla tabeli `rezerwacje`
 --
 ALTER TABLE `rezerwacje`
-  ADD CONSTRAINT `fk_rezerwacje_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`id`);
+  ADD CONSTRAINT `fk_rezerwacje_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`);
 
 --
 -- Ograniczenia dla tabeli `zamowienia`
 --
 ALTER TABLE `zamowienia`
-  ADD CONSTRAINT `fk_zamowienia_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`id`);
+  ADD CONSTRAINT `fk_zamowienia_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,6 +1,6 @@
 <?php
-require_once 'db.php';
 session_start();
+require_once 'db.php';
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit();
 }
@@ -19,7 +19,7 @@ if (!empty($_POST["name"])&&!empty($_POST["email"])&&!empty($_POST["pswd"]) && !
             header("Location: index.php");
             exit();
     } else {
-        $newUser = "INSERT INTO klienci VALUES(null, '$name', '$password','$email', '$phone')";
+        $newUser = "INSERT INTO klienci VALUES(null, '$name', '$password','$email', '$phone', false)";
             $addUser = mysqli_query($conn, $newUser);
                 $_SESSION["succ"] = "Zarejestrowano!";
                 header("Location: index.php");
