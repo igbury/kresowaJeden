@@ -13,23 +13,24 @@ unset($_SESSION["succ"]);
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
+     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KresowaJeden</title>
+    <title>KresowaJeden - Menu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
     <!-- https://icons.getbootstrap.com/ -->
-</head>    
+    
+</head>
 <body class="bg-dark">
-    <!-- NAVBAR -->
     <header>
         <nav class="navbar navbar-expand-sm border border-secondary bg-dark navbar-dark fixed-top">
             <div class="container-fluid">
                 <h3 class="navbar-text  mx-2 my-1">KresowaJeden</h3>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item mx-3 my-1">
-                        <a href="#" class="btn btn-outline-success">Home</a>
+                        <a href="index.php" class="btn btn-outline-success">Home</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
                         <a href="menu.php" class="btn btn-outline-success">Menu</a>
@@ -91,67 +92,42 @@ unset($_SESSION["succ"]);
             
         </nav>
     </header>
+    <!-- polaczenie z baza danych -->
+    <?php
+        $z = "SELECT menu.nazwaPotrawy, menu.opis, menu.cena FROM menu";
+        $r = mysqli_query($conn, $z);
+        ?>
 
-    <!-- MAIN -->
-    <main class="bg-dark">
+
+    <main>
         <div class="container-fluid text-light py-5 mx-0 my-5 d-flex align-items-center">
-            <div class="container bg- mx-5">
-                <h2 class="m-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt, eius.</h2>
-                <?php
-                    if(isset($_SESSION['user'])){
-                        echo "<h5>Zalogowany: ({$_SESSION['id']}) {$_SESSION['user']} </h5>";
-                        if($_SESSION['isAdmin']==true){
-                            echo "<p>Admin</p>";
-                        }
-                    }
-                ?>
-                <a href="menu.php" class="btn btn-outline-danger mx-5 my-3">Zobacz Menu</a>
-                <a href="rezerwacja.php" class="btn btn-outline-light">Zarezerwuj Stolik</a>
-                <a href="ocen.php" class="btn btn-outline-danger mx-5 my-3" data-bs-toggle="modal" data-bs-target="#ocenaModal">Ocen danie</a>
-                 
-                <hr class="my-5">
-                <div class="row text-center border border-secondary">
-                    <div class="col border border-secondary p-3">
-                        <h1 class="text-warning fw-bold">2</h1>
-                        <p class="text-uppercase small text-light mb-0">lat działalności</p>
-                    </div>
-                    <div class="col border border-secondary p-3">
-                        <h1 class="text-warning fw-bold">14</h1>
-                        <p class="text-uppercase small text-light mb-0">dań w menu</p>
-                    </div>
-                    <div class="col border border-secondary p-3">
-                        <h1 class="text-warning fw-bold">5.0</h1>
-                        <p class="text-uppercase small text-light mb-0">ocen gości</p>
-                    </div>
-                </div>
-            </div>
-            <div id="mainImage" class="container mx-5">
-                <img src="./img/kotlet.png" alt="kotlet">
-            </div>
-        </div>
-
-        <!-- Dania dnia -->
-        <div class="fixed-bottom w-100 bg-dark bg-opacity-75 py-3 border border-light">
-            <div class="container text-center">
-                <h3 class="text-danger d-flex align-items-center justify-content-center gap-3">
-                    <span class="display-6">V</span>
-                    <span>Dania dnia</span> 
-                    <span class="display-6">V</span>
-                </h3>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <?php while($wiersz = mysqli_fetch_row($r)): ?>
+                 <div class="col">
+                     <div class="card h-100 bg-dark text-light border-secondary">
+                        <div class="card-body py-4 my-3">   
+                            <h5 class="card-title"><?php echo $wiersz[0]; ?></h5>
+                            <p class="card-text "><?php echo $wiersz[1]; ?></p>
+                            <p class="card-text"><strong>Cena: </strong><?php echo $wiersz[2]; ?> zł</p>
+                            <p><button class="btn btn-outline-light">Dodaj do koszyka</button></p>
+                        </div>
+                                     </div>
+                 </div>
+                <?php endwhile; ?>
             </div>
         </div>
     </main>
-
-<!-- MODAL LOGOWANIA -->
+    <!-- MODAL LOGOWANIA -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="loginModalLabel">Zaloguj się</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <!-- FORMULARZ LOGOWANIA -->
+                </div> 
+                
+                
+    <!-- FORMULARZ LOGOWANIA -->
                 <form action="login.php" method="POST">
                     <div class="modal-body">
                         <div class="form-floating mb-3">
@@ -172,11 +148,12 @@ unset($_SESSION["succ"]);
                     </div>
                 </form>
             </div>
-        </div>
-    </div>
-
-
-<!-- MODAL REJESTRACJI -->
+        </div>  
+    </div>    
+                    
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>     
+            
+                    <!-- MODAL REJESTRACJI -->
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -220,100 +197,6 @@ unset($_SESSION["succ"]);
         </div>
     </div>
 
-<!-- MODAL OCENY -->
-    <div class="modal fade" id="ocenaModal" tabindex="-1" aria-labelledby="ocenaModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="ocenaModalLabel">Ocen danie</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
 
-                <!-- FORMULARZ OCEN -->
-                <form action="ocen.php" method="POST">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="danie">
-                                <p>Wybierz danie.</p>
-                                <select class="form-select" name="danie" id="danie">
-                                    <?php
-                                        $z1 = "SELECT id,nazwaPotrawy FROM menu;";
-                                        $result = mysqli_query($conn,$z1);
-                                        while($row = mysqli_fetch_assoc($result)){
-                                            echo "<option value='{$row['id']}'>{$row['nazwaPotrawy']}</option>";
-                                        }
-                                    ?>
-                                </select>
-                            </label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="number" require class="form-control" id="ocena" name="ocena" placeholder=" " min="1" max="5">
-                            <label for="ocena">Ocena (1-5)</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="recenzja" name="recenzja" placeholder=" ">
-                            <label for="recenzja">Komentarz</label>
-                        </div>                     
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Dodaj ocene</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>    
-                <!-- TOAST ERROR -->
-                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-                    <?php if ($error): ?>
-                    <div id="loginToastERR" class="toast align-items-center text-bg-danger border-0" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <?= htmlspecialchars($error) ?>
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-                <!-- TOAST SUCCESS -->
-                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-                    <?php if ($succ): ?>
-                    <div id="loginToastSUCC" class="toast align-items-center text-bg-success border-0" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <?= htmlspecialchars($succ) ?>
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>                
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<?php if ($error): ?>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var modal = new bootstrap.Modal(document.getElementById('<?= $error_modal ?>'));
-    modal.show();
-
-    var toastEl = document.getElementById('loginToastERR');
-    var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
-    toast.show();
-});
-</script>
-<?php endif; ?>
-<?php if ($succ): ?>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var toastEl = document.getElementById('loginToastSUCC');
-    var toast = new bootstrap.Toast(toastEl, {
-        delay: 3000
-    });
-    toast.show();
-});
-</script>
-<?php endif; ?>
 </body>
 </html>
