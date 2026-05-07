@@ -29,7 +29,7 @@ unset($_SESSION["succ"]);
                 <h3 class="navbar-text  mx-2 my-1">KresowaJeden</h3>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item mx-3 my-1">
-                        <a href="#" class="btn btn-outline-success">Home</a>
+                        <a href="index.php" class="btn btn-outline-success active">Home</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
                         <a href="menu.php" class="btn btn-outline-success">Menu</a>
@@ -40,7 +40,7 @@ unset($_SESSION["succ"]);
                                 <li class="nav-item mx-3 my-1">
                                     <div class="dropend">
                                         <a class="btn btn-outline-danger dropdown-toggle" role="button" data-bs-theme="dark" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Panel Administratora
+                                            Administracja
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-dark">
                                             <li><a class="dropdown-item" href="modifyMenu.php">Modyfikuj menu</a></li>
@@ -69,16 +69,16 @@ unset($_SESSION["succ"]);
                         if(isset($_SESSION['user'])){
                             echo '
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="#" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
+                                    <a href="cart/cart.php" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
                                 </li>                            
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="logout.php" class="btn btn-outline-danger">Wyloguj.</a>
+                                    <a href="logout.php" class="btn btn-outline-danger">Wyloguj</a>
                                 </li>
                             ';
                         }else{
                             echo '
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="#" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
+                                    <a href="cart/cart.php" class="btn btn-outline-light disabled"><i class="bi bi-cart"></i></a>
                                 </li>  
                                 <li class="nav-item mx-2 my-1">
                                     <a href="login.php" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
@@ -108,12 +108,11 @@ unset($_SESSION["succ"]);
                 <a href="menu.php" class="btn btn-outline-danger mx-5 my-3">Zobacz Menu</a>
                 <a href="rezerwacja.php" class="btn btn-outline-light">Zarezerwuj Stolik</a>
                 <a href="ocen.php" class="btn btn-outline-danger mx-5 my-3" data-bs-toggle="modal" data-bs-target="#ocenaModal">Ocen danie</a>
-                 
                 <hr class="my-5">
                 <div class="row text-center border border-secondary">
                     <div class="col border border-secondary p-3">
                         <h1 class="text-warning fw-bold">2</h1>
-                        <p class="text-uppercase small text-light mb-0">lat działalności</p>
+                        <p class="text-uppercase small text-light mb-0">lata działalności</p>
                     </div>
                     <div class="col border border-secondary p-3">
                         <h1 class="text-warning fw-bold">14</h1>
@@ -130,7 +129,7 @@ unset($_SESSION["succ"]);
             </div>
         </div>
 
-        <!-- Dania dnia -->
+        <!-- Dania dnia 
         <div class="fixed-bottom w-100 bg-dark bg-opacity-75 py-3 border border-light">
             <div class="container text-center">
                 <h3 class="text-danger d-flex align-items-center justify-content-center gap-3">
@@ -139,7 +138,7 @@ unset($_SESSION["succ"]);
                     <span class="display-6">V</span>
                 </h3>
             </div>
-        </div>
+        </div>-->
     </main>
 
 <!-- MODAL LOGOWANIA -->
@@ -317,3 +316,6 @@ document.addEventListener('DOMContentLoaded', function () {
 <?php endif; ?>
 </body>
 </html>
+
+
+

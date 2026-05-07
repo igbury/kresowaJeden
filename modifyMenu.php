@@ -35,15 +35,15 @@ unset($_SESSION["succ"]);
                         <a href="index.php" class="btn btn-outline-success text-white">Home</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
-                        <a href="#" class="btn btn-outline-success text-white">Menu</a>
+                        <a href="menu.php" class="btn btn-outline-success text-white">Menu</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
                         <div class="dropend">
                             <a class="btn btn-outline-danger text-white dropdown-toggle" role="button" data-bs-theme="dark" data-bs-toggle="dropdown" aria-expanded="false">
-                                Panel Administratora
+                                Administracja
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" href="#">Modyfikuj menu</a></li>
+                                <li><a class="dropdown-item" href="modifyMenu.php">Modyfikuj menu</a></li>
                                 <li><a class="dropdown-item disabled" href="#">Zarządzaj pracownikami</a></li>
                                 <li><a class="dropdown-item disabled" href="#">Zarządzaj restauracją</a></li>
                             </ul>
@@ -52,7 +52,7 @@ unset($_SESSION["succ"]);
                 </ul>
                 <ul class="navbar-nav ms-auto">                           
                     <li class="nav-item mx-2 my-1">
-                        <a href="logout.php" class="btn text-white btn-outline-danger">Wyloguj.</a>
+                        <a href="logout.php" class="btn text-white btn-outline-danger">Wyloguj</a>
                     </li>
                 </ul>            
             </div>
@@ -86,12 +86,12 @@ unset($_SESSION["succ"]);
                             echo "<th scope='row'>{$row['id']}</th>";
                             echo "<td>{$row['nazwaPotrawy']}</td>";
                             echo "<td>{$row['opis']}</td>";
-                            echo "<td>{$row['cena']}</td>";
+                            echo "<td>{$row['cena']}zł</td>";
                             echo "<td>" . ($row['dostepne'] == 1 ? 'tak' : 'nie') . "</td>";
                             echo "<td style='width:1%'>
                                     <form action='deleteMeal.php' method='POST'>
                                         <input type='hidden' name='id' value='{$row['id']}'>
-                                        <button type='submit' class='btn text-secondary btn-outline-danger btn-sm'>Usuń</button>
+                                        <button type='submit' class='btn text-light btn-outline-danger btn-sm'>Usuń</button>
                                     </form>
                                 </td>";    
                             echo '</tr>';

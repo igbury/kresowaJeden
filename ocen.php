@@ -1,13 +1,13 @@
 <?php
     session_start();
     require_once 'db.php';
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    exit();
-}
-if (!isset($_SESSION['id'])) {
-    header("Location: index.php");
-    exit();
-}
+    if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+        exit();
+    }
+    if (!isset($_SESSION['id'])) {
+        header("Location: index.php");
+        exit();
+    }
     $klient = $_SESSION['id'];
     $danie = mysqli_real_escape_string($conn, $_POST['danie']);
     $ocena = (int) $_POST['ocena'];

@@ -3,7 +3,7 @@ session_start();
 require_once(__DIR__ . "/db.php");
 $error = $_SESSION["error"] ?? null;
 $succ = $_SESSION["succ"] ?? null;
-$error_modal = $_SESSION["error_modal"] ?? "loginModal";
+$error_modal = $_SESSION["error_modal"] ?? "cartModal";
 
 
 unset($_SESSION["error_modal"]);
@@ -33,7 +33,7 @@ unset($_SESSION["succ"]);
                         <a href="index.php" class="btn btn-outline-success">Home</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
-                        <a href="menu.php" class="btn btn-outline-success">Menu</a>
+                        <a href="menu.php" class="btn btn-outline-success active">Menu</a>
                     </li>
                     <?php
                         if(isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']==true){
@@ -41,7 +41,7 @@ unset($_SESSION["succ"]);
                                 <li class="nav-item mx-3 my-1">
                                     <div class="dropend">
                                         <a class="btn btn-outline-danger dropdown-toggle" role="button" data-bs-theme="dark" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Panel Administratora
+                                            Administracja
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-dark">
                                             <li><a class="dropdown-item" href="modifyMenu.php">Modyfikuj menu</a></li>
@@ -70,16 +70,16 @@ unset($_SESSION["succ"]);
                         if(isset($_SESSION['user'])){
                             echo '
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="#" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
+                                    <a href="cart/cart.php" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
                                 </li>                            
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="logout.php" class="btn btn-outline-danger">Wyloguj.</a>
+                                    <a href="logout.php" class="btn btn-outline-danger">Wyloguj</a>
                                 </li>
                             ';
                         }else{
                             echo '
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="#" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
+                                    <a href="cart/cart.php" class="btn btn-outline-light disabled"><i class="bi bi-cart"></i></a>
                                 </li>  
                                 <li class="nav-item mx-2 my-1">
                                     <a href="login.php" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
@@ -94,7 +94,7 @@ unset($_SESSION["succ"]);
     </header>
     <!-- polaczenie z baza danych -->
     <?php
-        $z = "SELECT menu.nazwaPotrawy, menu.opis, menu.cena FROM menu";
+        $z = "SELECT menu.nazwaPotrawy, menu.opis, menu.cena, menu.id FROM menu";
         $r = mysqli_query($conn, $z);
         ?>
 
@@ -103,16 +103,19 @@ unset($_SESSION["succ"]);
         <div class="container-fluid text-light py-5 mx-0 my-5 d-flex align-items-center">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <?php while($wiersz = mysqli_fetch_row($r)): ?>
-                 <div class="col">
-                     <div class="card h-100 bg-dark text-light border-secondary">
+                <div class="col">
+                    <div class="card h-100 bg-dark text-light border-secondary">
                         <div class="card-body py-4 my-3">   
                             <h5 class="card-title"><?php echo $wiersz[0]; ?></h5>
                             <p class="card-text "><?php echo $wiersz[1]; ?></p>
                             <p class="card-text"><strong>Cena: </strong><?php echo $wiersz[2]; ?> zł</p>
-                            <p><button class="btn btn-outline-light">Dodaj do koszyka</button></p>
+                            <form action='cart/addToCart.php' method='POST'>
+                                <input type='hidden' name='id' value='<?php echo $wiersz[3]; ?>'>
+                                <button type='submit' class='btn text-light btn-outline-light btn-sm'>Dodaj do koszyka</button>
+                            </form>
                         </div>
-                                     </div>
-                 </div>
+                    </div>
+                </div>
                 <?php endwhile; ?>
             </div>
         </div>
@@ -198,5 +201,68 @@ unset($_SESSION["succ"]);
     </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <!-- TOAST ERROR -->
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+                    <?php if ($error): ?>
+                    <div id="loginToastERR" class="toast align-items-center text-bg-danger border-0" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <?= htmlspecialchars($error) ?>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <!-- TOAST SUCCESS -->
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+                    <?php if ($succ): ?>
+                    <div id="loginToastSUCC" class="toast align-items-center text-bg-success border-0" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <?= htmlspecialchars($succ) ?>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>                
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>    
+<?php if ($error): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var modal = new bootstrap.Modal(document.getElementById('<?= $error_modal ?>'));
+    modal.show();
+
+    var toastEl = document.getElementById('loginToastERR');
+    var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    toast.show();
+});
+</script>
+<?php endif; ?>
+<?php if ($succ): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var toastEl = document.getElementById('loginToastSUCC');
+    var toast = new bootstrap.Toast(toastEl, {
+        delay: 3000
+    });
+    toast.show();
+});
+</script>
+<?php endif; ?>
 </body>
 </html>
