@@ -4,30 +4,35 @@ require_once (__DIR__ . '/db.php');
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit();
 }
-    $_SESSION["error_modal"] = "registerModal";
+$_SESSION["error_modal"] = "registerModal";
 
-if (!empty($_POST["name"])&&!empty($_POST["email"])&&!empty($_POST["pswd"]) && !empty($_POST["phone"])) {
-    $name = mysqli_real_escape_string($conn, $_POST["name"]);
-    $email = mysqli_real_escape_string($conn, $_POST["email"]);
-    $password = mysqli_real_escape_string($conn, password_hash($_POST["pswd"], PASSWORD_DEFAULT));
-    $phone = mysqli_real_escape_string($conn, $_POST["phone"]);
+if (!empty($_POST["name"]) && !empty($_POST["email"]) && !empty($_POST["pswd"]) && !empty($_POST["phone"])) {
+    
+    // sprawdz czy email juz istnieje
+    $stmt = mysqli_prepare($conn, "SELECT email FROM klienci WHERE email = ?");
+    mysqli_stmt_bind_param($stmt, "s", $_POST["email"]);
+    mysqli_stmt_execute($stmt);
+    $validate = mysqli_stmt_get_result($stmt);
 
-    $sql = "SELECT email FROM klienci WHERE email = '$email'";
-    $validate = mysqli_query($conn, $sql);
     if ($validate && mysqli_num_rows($validate) > 0) {
-            $_SESSION["error"] = "Uzytkownik o tym loginie juz isniteje.";
-            header("Location: index.php");
-            exit();
-    } else {
-        $newUser = "INSERT INTO klienci  VALUES (null, '$name', '$password', '$email', '$phone', false)";
-            $addUser = mysqli_query($conn, $newUser);
-                $_SESSION["succ"] = "Zarejestrowano!";
-                header("Location: index.php");
-                exit();
+        $_SESSION["error"] = "Uzytkownik o tym loginie juz istnieje.";
+        header("Location: index.php");
+        exit();
     }
+
+    // dodaj nowego uzytkownika
+    $hash = password_hash($_POST["pswd"], PASSWORD_DEFAULT);
+    $stmt2 = mysqli_prepare($conn, "INSERT INTO klienci VALUES (null, ?, ?, ?, ?, false)");
+    mysqli_stmt_bind_param($stmt2, "ssss", $_POST["name"], $hash, $_POST["email"], $_POST["phone"]);
+    mysqli_stmt_execute($stmt2);
+
+    $_SESSION["succ"] = "Zarejestrowano!";
+    header("Location: index.php");
+    exit();
+
 } else {
-            $_SESSION["error"] = "Musisz wypelnic dane.";
-            header("Location: index.php");
-            exit();
+    $_SESSION["error"] = "Musisz wypelnic dane.";
+    header("Location: index.php");
+    exit();
 }
 ?>

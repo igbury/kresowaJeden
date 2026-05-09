@@ -7,6 +7,7 @@ $succ = $_SESSION["succ"] ?? null;
 $error_modal = $_SESSION["error_modal"] ?? "loginModal";
 
 if(!isset($_SESSION["user"])){
+    $_SESSION["error"] = "Musisz być zalogowany, aby zobaczyć koszyk!";
     header("Location: index.php");
     exit();
 }
@@ -33,10 +34,10 @@ unset($_SESSION["succ"]);
                 <h3 class="navbar-text  mx-2 my-1">KresowaJeden</h3>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item mx-3 my-1">
-                        <a href="/../index.php" class="btn btn-outline-success">Home</a>
+                        <a href="../index.php" class="btn btn-outline-success">Home</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
-                        <a href="/../menu.php" class="btn btn-outline-success">Menu</a>
+                        <a href="../menu.php" class="btn btn-outline-success">Menu</a>
                     </li>
                     <?php
                         if(isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']==true){
@@ -76,7 +77,7 @@ unset($_SESSION["succ"]);
                                     <a href="cart.php" class="btn btn-outline-light active"><i class="bi bi-cart"></i></a>
                                 </li>                            
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="/../logout.php" class="btn btn-outline-danger">Wyloguj</a>
+                                    <a href="../logout.php" class="btn btn-outline-danger">Wyloguj</a>
                                 </li>
                             ';
                         }else{
@@ -85,7 +86,7 @@ unset($_SESSION["succ"]);
                                     <a href="cart.php" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
                                 </li>  
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="/../login.php" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
+                                    <a href="../login.php" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
                                 </li>                              
                             ';
                         }                        
@@ -109,6 +110,7 @@ unset($_SESSION["succ"]);
                             if(!empty($_SESSION['cart'])){
                                 echo '<th scope="col"style="min-width:150px; max-width: 300px;">Potrawa</th>';
                                 echo '<th scope="col"style="min-width:80px; max-width: 120px;">Cena</th>';
+                                echo '<th scope="col"style="min-width:80px; max-width: 120px;">Ilosc</th>';
                                 echo '<th scope="col" style="width:1%">Akcje</th>';
                             }
                         ?>
@@ -119,25 +121,36 @@ unset($_SESSION["succ"]);
                             if(!empty($_SESSION['cart'])){
                                 foreach($_SESSION['cart'] as $mealId=>$amount){
                                     $id = (int)$mealId;
+                                    $ilosc = (int)$amount;
                                     $sql = "SELECT id,nazwaPotrawy,cena FROM menu WHERE id=$id";
                                     $result = mysqli_query($conn, $sql);
-                                    $row = mysqli_fetch_assoc($result);
+                                    $row = mysqli_fetch_assoc($result);                                   
                                     if($row){
                                         $sumaCen += $row['cena']*$amount;
                                         echo '<tr>';
                                         echo "<td>{$row['nazwaPotrawy']}</td>";
                                         echo "<td>{$row['cena']}zł</td>";
+                                        echo "<td>" . $amount . "</td>";
                                         echo "<td style='width:1%'>
-                                            <form action='removeFromCart.php' method='POST'>
-                                            <input type='hidden' name='id' value='{$row['id']}'>
-                                            <button type='submit' class='btn text-light btn-outline-danger'><i class='bi bi-trash'></i></button>
-                                            </form></td>";
+                                                <div class='d-flex gap-1'>
+                                                    <form action='removeFromCart.php' method='POST'>
+                                                        <input type='hidden' name='id' value='{$row['id']}'>
+                                                        <input type='hidden' name='akcja' value='zmniejsz'>
+                                                        <button type='submit' class='btn btn-outline-warning btn-sm'>-</button>
+                                                    </form>
+                                                    <form action='removeFromCart.php' method='POST'>
+                                                        <input type='hidden' name='id' value='{$row['id']}'>
+                                                        <input type='hidden' name='akcja' value='usun'>
+                                                        <button type='submit' class='btn btn-outline-danger btn-sm'><i class='bi bi-trash'></i></button>
+                                                    </form>
+                                                </div>
+                                            </td>";
                                         echo '</tr>';
                                     }
                                 }
                             }else{
                                 echo '<tr><td colspan="5" class="text-center">Koszyk jest pusty.</td></tr>';
-                                echo '<tr><td colspan="5" class="text-center"><a href="/../menu.php" class="btn btn-outline-success text-light">Dodaj potrawy do koszyka!</a></td></tr>';
+                                echo '<tr><td colspan="5" class="text-center"><a href="../menu.php" class="btn btn-outline-success text-light">Dodaj potrawy do koszyka!</a></td></tr>';
                             }
                         ?>
                     </tbody>
@@ -146,7 +159,7 @@ unset($_SESSION["succ"]);
                 <?php
                     if(!empty($_SESSION['cart'])){
                         echo '<form action="payment.php" method="post">';
-                        echo '<p>Suma do zapłaty: <?php echo $sumaCen?></p>';
+                        echo "<p>Suma do zapłaty: {$sumaCen} zł</p>";
                         echo '<button type="submit" class="btn btn-outline-success text-light">Zapłać</button>';
                         echo '</form>';
                     }

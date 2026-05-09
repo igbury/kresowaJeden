@@ -2,6 +2,13 @@
     session_start();
 
     $_SESSION["error_modal"] = "cartModal";
+
+if(!isset($_SESSION['user'])){
+    $_SESSION["error"] = "Musisz być zalogowany, aby dodać do koszyka!";
+    $_SESSION["error_modal"] = "loginModal";
+    header("Location: ../menu.php");
+    exit();
+}
     if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['id'])){
         $id = (int)$_POST['id'];
 

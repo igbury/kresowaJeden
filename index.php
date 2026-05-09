@@ -66,19 +66,22 @@ unset($_SESSION["succ"]);
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <?php
+                   
                         if(isset($_SESSION['user'])){
+                            $count = isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : 0;
                             echo '
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="cart/cart.php" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
+                                    <a href="cart/cart.php" class="btn btn-outline-light"><i class="bi bi-cart"></i> '. $count .' </a>
                                 </li>                            
                                 <li class="nav-item mx-2 my-1">
                                     <a href="logout.php" class="btn btn-outline-danger">Wyloguj</a>
                                 </li>
                             ';
                         }else{
+                            
                             echo '
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="cart/cart.php" class="btn btn-outline-light disabled"><i class="bi bi-cart"></i></a>
+                                    <a href="cart/cart.php" class="btn btn-outline-light disabled" ><i class="bi bi-cart"></i></a>
                                 </li>  
                                 <li class="nav-item mx-2 my-1">
                                     <a href="login.php" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
