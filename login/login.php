@@ -1,7 +1,9 @@
 <?php
+/*
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+*/
 //uzywaj tego jak musisz sprawdzic co ci nie dziala w jakims skrypcie php'a
 
 session_start();
