@@ -35,7 +35,7 @@ unset($_SESSION["succ"]);
                 <h3 class="navbar-text  mx-2 my-1">KresowaJeden</h3>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item mx-3 my-1">
-                        <a href="/index.php" class="btn btn-outline-success">Home</a>
+                        <a href="<?=INDEX?>" class="btn btn-outline-success">Home</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
                         <a href="<?=VIEWMENU?>" class="btn btn-outline-success">Menu</a>

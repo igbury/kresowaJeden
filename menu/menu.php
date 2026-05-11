@@ -24,6 +24,54 @@ unset($_SESSION["succ"]);
     <!-- https://icons.getbootstrap.com/ -->
     
 </head>
+<script>
+const catLabels = {
+    all:          'Wszystkie dania',
+    danie_glowne: 'Dania główne',
+    zupa:         'Zupy',
+    salatka:      'Sałatki',
+    dodatek:      'Dodatki',
+    dziecięce:    'Dla najmłodszych'
+};
+
+function filterMenu(cat, el) {
+
+    document.querySelectorAll('.cat-tile').forEach(t => {
+        t.classList.remove('bg-success', 'text-white', 'border-success');
+        t.classList.add('text-secondary', 'border-secondary', 'bg-dark');
+    });
+
+    el.classList.remove('text-secondary', 'border-secondary', 'bg-dark');
+
+    el.classList.add(
+        'bg-success',
+        'text-white',
+        'border-success'
+    );
+
+    document.getElementById('cat-label').textContent =
+        catLabels[cat] ?? cat;
+
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.style.display =
+            (cat === 'all' || item.dataset.cat === cat)
+            ? ''
+            : 'none';
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const allBtn = document.querySelector('[data-cat="all"]');
+
+    allBtn.classList.remove('text-secondary', 'border-secondary', 'bg-dark');
+
+    allBtn.classList.add(
+        'bg-success',
+        'text-white',
+        'border-success'
+    );
+});
+</script>
 <body class="bg-dark">
     <header>
         <nav class="navbar navbar-expand-sm border border-secondary bg-dark navbar-dark fixed-top">
@@ -31,7 +79,7 @@ unset($_SESSION["succ"]);
                 <h3 class="navbar-text  mx-2 my-1">KresowaJeden</h3>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item mx-3 my-1">
-                        <a href="/index.php" class="btn btn-outline-success">Home</a>
+                        <a href="<?=INDEX?>" class="btn btn-outline-success">Home</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
                         <a href="<?=VIEWMENU?>" class="btn btn-outline-success active">Menu</a>
@@ -102,26 +150,63 @@ unset($_SESSION["succ"]);
 
 
     <main>
-        <div class="container-fluid text-light py-5 mx-0 my-5 d-flex align-items-center">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                <?php while($wiersz = mysqli_fetch_row($r)): ?>
-                <div class="col">
-                    <div class="card h-100 bg-dark text-light border-secondary">
-                        <div class="card-body py-4 my-3">   
-                            <h5 class="card-title"><?php echo $wiersz[0]; ?></h5>
-                            <p class="card-text "><?php echo $wiersz[1]; ?></p>
-                            <p class="card-text"><strong>Cena: </strong><?php echo $wiersz[2]; ?> zł</p>
-                            <form action='<?=ADDTOCART?>' method='POST'>
-                                <input type='hidden' name='id' value='<?php echo $wiersz[3]; ?>'>
-                                <button type='submit' class='btn text-light btn-outline-secondary btn-sm'>Dodaj do koszyka</button>
-                            </form>
-                        </div>
+    <div class="container-fluid text-light py-5 mx-0 my-5">
+
+        <!-- KAFELKI KATEGORII -->
+        <div class="row justify-content-center mb-2 g-3">
+            <?php
+            $categories = [
+                'all'          => ['icon' => 'bi-grid-fill',         'label' => 'Wszystkie'],
+                'danie_glowne' => ['icon' => 'bi-egg-fried',         'label' => 'Dania główne'],
+                'zupa'         => ['icon' => 'bi-cup-hot-fill',      'label' => 'Zupy'],
+                'salatka'      => ['icon' => 'bi-tree-fill',         'label' => 'Sałatki'],
+                'dodatek'      => ['icon' => 'bi-basket-fill',       'label' => 'Dodatki'],
+                'dziecięce'    => ['icon' => 'bi-balloon-heart-fill','label' => 'Dla najmłodszych'],
+            ];
+            foreach ($categories as $key => $cat): ?>
+            <div class="col-6 col-sm-4 col-md-2">
+                <div class="cat-tile text-center p-3 border border-secondary rounded-3 text-secondary bg-dark"
+                     style="cursor:pointer; transition: all .2s;"
+                     data-cat="<?= $key ?>"
+                     onclick="filterMenu('<?= $key ?>', this)">
+                    <i class="bi <?= $cat['icon'] ?>" style="font-size:2rem; display:block; margin-bottom:.4rem;"></i>
+                    <span style="font-size:.85rem; font-weight:500;"><?= $cat['label'] ?></span>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <p class="text-secondary text-uppercase" id="cat-label"
+           style="font-size:.75rem; letter-spacing:.1em; margin: 1.2rem 0 .5rem 4px;">
+            Wszystkie dania
+        </p>
+
+        <!-- KARTY POTRAW -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="menu-cards">
+            <?php
+            $z = "SELECT nazwaPotrawy, opis, cena, id, typ FROM menu";
+            $r = mysqli_query($conn, $z);
+            if (!$r) {
+                die("Błąd zapytania: " . mysqli_error($conn));
+            }
+            while ($wiersz = mysqli_fetch_row($r)): ?>
+            <div class="col menu-item" data-cat="<?= htmlspecialchars($wiersz[4]) ?>">
+                <div class="card h-100 bg-dark text-light border-secondary">
+                    <div class="card-body py-4 my-3">
+                        <h5 class="card-title"><?= htmlspecialchars($wiersz[0]) ?></h5>
+                        <p class="card-text"><?= htmlspecialchars($wiersz[1]) ?></p>
+                        <p class="card-text"><strong>Cena: </strong><?= htmlspecialchars($wiersz[2]) ?> zł</p>
+                        <form action='<?= ADDTOCART ?>' method='POST'>
+                            <input type='hidden' name='id' value='<?= $wiersz[3] ?>'>
+                            <button type='submit' class='btn text-light btn-outline-secondary btn-sm'>Dodaj do koszyka</button>
+                        </form>
                     </div>
                 </div>
-                <?php endwhile; ?>
             </div>
+            <?php endwhile; ?>
         </div>
-    </main>
+    </div>
+</main>
     <!-- MODAL LOGOWANIA -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
