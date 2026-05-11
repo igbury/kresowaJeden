@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once(__DIR__ . "/db.php");
+require_once __DIR__ . '/paths.php';
 $error = $_SESSION["error"] ?? null;
 $succ = $_SESSION["succ"] ?? null;
 $error_modal = $_SESSION["error_modal"] ?? "loginModal";
@@ -32,7 +33,7 @@ unset($_SESSION["succ"]);
                         <a href="index.php" class="btn btn-outline-success active">Home</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
-                        <a href="menu.php" class="btn btn-outline-success">Menu</a>
+                        <a href="<?=VIEWMENU?>" class="btn btn-outline-success">Menu</a>
                     </li>
                     <?php
                         if(isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']==true){
@@ -43,7 +44,7 @@ unset($_SESSION["succ"]);
                                             Administracja
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-dark">
-                                            <li><a class="dropdown-item" href="modifyMenu.php">Modyfikuj menu</a></li>
+                                            <li><a class="dropdown-item" href="'.MODIFYMENU.'">Modyfikuj menu</a></li>
                                             <li><a class="dropdown-item disabled" href="#">Zarządzaj pracownikami</a></li>
                                             <li><a class="dropdown-item disabled" href="#">Zarządzaj restauracją</a></li>
                                         </ul>
@@ -66,25 +67,27 @@ unset($_SESSION["succ"]);
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <?php
-                   
                         if(isset($_SESSION['user'])){
                             $count = isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : 0;
                             echo '
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="cart/cart.php" class="btn btn-outline-light"><i class="bi bi-cart"></i> '. $count .' </a>
-                                </li>                            
+                                    <a href="' . VIEWCART . '" class="btn btn-outline-light"><i class="bi bi-cart"></i> '. $count .' </a>
+                                </li>             
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="logout.php" class="btn btn-outline-danger">Wyloguj</a>
+                                    <a href="' . VIEWACCOUNT . '" class="btn btn-outline-light"><i class="bi bi-person-fill"></i>   </a>
+                                </li>                                            
+                                <li class="nav-item mx-2 my-1">
+                                    <a href="' . LOGOUT . '" class="btn btn-outline-danger">Wyloguj</a>
                                 </li>
                             ';
                         }else{
                             
                             echo '
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="cart/cart.php" class="btn btn-outline-light disabled" ><i class="bi bi-cart"></i></a>
+                                    <a href="'. VIEWCART .'" class="btn btn-outline-light disabled" ><i class="bi bi-cart"></i></a>
                                 </li>  
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="login.php" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
+                                    <a href="'. LOGIN .'" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
                                 </li>                              
                             ';
                         }                        
@@ -154,7 +157,7 @@ unset($_SESSION["succ"]);
                 </div>
 
                 <!-- FORMULARZ LOGOWANIA -->
-                <form action="login.php" method="POST">
+                <form action="<?= LOGIN ?>" method="POST">
                     <div class="modal-body">
                         <div class="form-floating mb-3">
                             <input type="email" class="form-control" id="email" name="email" placeholder=" ">
@@ -189,7 +192,7 @@ unset($_SESSION["succ"]);
 
 
                 <!-- FORMULARZ REJESTRACJI -->
-                <form action="register.php" method="POST">
+                <form action="<?=REGISTER?>" method="POST">
                     <div class="modal-body">
 
                         <div class="form-floating mb-3">
@@ -232,7 +235,7 @@ unset($_SESSION["succ"]);
                 </div>
 
                 <!-- FORMULARZ OCEN -->
-                <form action="ocen.php" method="POST">
+                <form action="<?=RATE?>" method="POST">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="danie">

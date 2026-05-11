@@ -14,6 +14,6 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['id'])){
         unset($_SESSION['cart'][$id]);
     }
 }
-header("Location: cart.php");
+header("Location:".VIEWCART);
 exit;
 ?>

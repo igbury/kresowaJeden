@@ -1,6 +1,6 @@
 <?php
     session_start();
-
+    require_once __DIR__ . '/../paths.php';
     $_SESSION["error_modal"] = "cartModal";
 
 if(!isset($_SESSION['user'])){
@@ -22,10 +22,10 @@ if(!isset($_SESSION['user'])){
             $_SESSION['cart'][$id] = 1;
         }
             $_SESSION["succ"] = "Dodano potrawę do koszyka!";
-            header("Location: ../menu.php");
+            header("Location: ".VIEWMENU);
             exit();        
     }
 
-    header("Location: ../menu.php");
+    header("Location:".VIEWMENU);
     exit;
 ?>

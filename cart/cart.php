@@ -1,14 +1,15 @@
 
 <?php
 session_start();
-require_once(__DIR__ . "/../db.php");
+require_once __DIR__ . '/../db.php'; 
+require_once __DIR__ . '/../paths.php';  
 $error = $_SESSION["error"] ?? null;
 $succ = $_SESSION["succ"] ?? null;
 $error_modal = $_SESSION["error_modal"] ?? "loginModal";
 
 if(!isset($_SESSION["user"])){
     $_SESSION["error"] = "Musisz być zalogowany, aby zobaczyć koszyk!";
-    header("Location: index.php");
+    header("Location: /../index.php");
     exit();
 }
 unset($_SESSION["error_modal"]);
@@ -34,10 +35,10 @@ unset($_SESSION["succ"]);
                 <h3 class="navbar-text  mx-2 my-1">KresowaJeden</h3>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item mx-3 my-1">
-                        <a href="../index.php" class="btn btn-outline-success">Home</a>
+                        <a href="/index.php" class="btn btn-outline-success">Home</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
-                        <a href="../menu.php" class="btn btn-outline-success">Menu</a>
+                        <a href="<?=VIEWMENU?>" class="btn btn-outline-success">Menu</a>
                     </li>
                     <?php
                         if(isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']==true){
@@ -48,7 +49,7 @@ unset($_SESSION["succ"]);
                                             Administracja
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-dark">
-                                            <li><a class="dropdown-item" href="/../modifyMenu.php">Modyfikuj menu</a></li>
+                                            <li><a class="dropdown-item" href="'.MODIFYMENU.'">Modyfikuj menu</a></li>
                                             <li><a class="dropdown-item disabled" href="#">Zarządzaj pracownikami</a></li>
                                             <li><a class="dropdown-item disabled" href="#">Zarządzaj restauracją</a></li>
                                         </ul>
@@ -74,19 +75,19 @@ unset($_SESSION["succ"]);
                         if(isset($_SESSION['user'])){
                             echo '
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="cart.php" class="btn btn-outline-light active"><i class="bi bi-cart"></i></a>
+                                    <a href="'.VIEWCART.'" class="btn btn-outline-light active"><i class="bi bi-cart"></i></a>
                                 </li>                            
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="../logout.php" class="btn btn-outline-danger">Wyloguj</a>
+                                    <a href="'.LOGOUT.'" class="btn btn-outline-danger">Wyloguj</a>
                                 </li>
                             ';
                         }else{
                             echo '
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="cart.php" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
+                                    <a href="'.VIEWCART.'" class="btn btn-outline-light"><i class="bi bi-cart"></i></a>
                                 </li>  
                                 <li class="nav-item mx-2 my-1">
-                                    <a href="../login.php" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
+                                    <a href="'.LOGIN.'" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
                                 </li>                              
                             ';
                         }                        
@@ -133,12 +134,12 @@ unset($_SESSION["succ"]);
                                         echo "<td>" . $amount . "</td>";
                                         echo "<td style='width:1%'>
                                                 <div class='d-flex gap-1'>
-                                                    <form action='removeFromCart.php' method='POST'>
+                                                    <form action='".REMOVEFROMCART."' method='POST'>
                                                         <input type='hidden' name='id' value='{$row['id']}'>
                                                         <input type='hidden' name='akcja' value='zmniejsz'>
                                                         <button type='submit' class='btn btn-outline-warning btn-sm'>-</button>
                                                     </form>
-                                                    <form action='removeFromCart.php' method='POST'>
+                                                    <form action='".REMOVEFROMCART."' method='POST'>
                                                         <input type='hidden' name='id' value='{$row['id']}'>
                                                         <input type='hidden' name='akcja' value='usun'>
                                                         <button type='submit' class='btn btn-outline-danger btn-sm'><i class='bi bi-trash'></i></button>
@@ -150,7 +151,7 @@ unset($_SESSION["succ"]);
                                 }
                             }else{
                                 echo '<tr><td colspan="5" class="text-center">Koszyk jest pusty.</td></tr>';
-                                echo '<tr><td colspan="5" class="text-center"><a href="../menu.php" class="btn btn-outline-success text-light">Dodaj potrawy do koszyka!</a></td></tr>';
+                                echo '<tr><td colspan="5" class="text-center"><a href="'.VIEWMENU.'" class="btn btn-outline-success text-light">Dodaj potrawy do koszyka!</a></td></tr>';
                             }
                         ?>
                     </tbody>
@@ -158,7 +159,7 @@ unset($_SESSION["succ"]);
             <div class="py-3 text-center">
                 <?php
                     if(!empty($_SESSION['cart'])){
-                        echo '<form action="payment.php" method="post">';
+                        echo '<form action="'.PAYMENT.'" method="post">';
                         echo "<p>Suma do zapłaty: {$sumaCen} zł</p>";
                         echo '<button type="submit" class="btn btn-outline-success text-light">Zapłać</button>';
                         echo '</form>';
