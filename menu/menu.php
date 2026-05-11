@@ -1,15 +1,56 @@
 <?php
+// =============================================
+// STARTOWANIE SESJI I ŁADOWANIE PLIKÓW
+// =============================================
 session_start();
-require_once __DIR__ . '/../db.php'; 
-require_once __DIR__ . '/../paths.php';
-$error = $_SESSION["error"] ?? null;
-$succ = $_SESSION["succ"] ?? null;
-$error_modal = $_SESSION["error_modal"] ?? "cartModal";
+require_once __DIR__ . '/../db.php';    // połączenie z bazą danych ($conn)
+require_once __DIR__ . '/../paths.php'; // stałe z adresami URL (LOGIN, LOGOUT itd.)
 
+// Pobierz komunikaty z sesji (ustawiane przez inne strony)
+$blad  = $_SESSION["error"] ?? null; // np. "Złe hasło"
+$sukces = $_SESSION["succ"]  ?? null; // np. "Dodano do koszyka"
+$modal_bledu = $_SESSION["error_modal"] ?? "cartModal"; // który modal otworzyć przy błędzie
 
+// Usuń komunikaty z sesji żeby nie pokazywały się po odświeżeniu
 unset($_SESSION["error_modal"]);
 unset($_SESSION["error"]);
 unset($_SESSION["succ"]);
+
+// =============================================
+// DANE KATEGORII
+// =============================================
+// Każda kategoria ma: klucz (używany w bazie), ikonę Bootstrap i polską nazwę
+$kategorie = [
+    'all'       => ['ikona' => 'bi-grid-fill',          'nazwa' => 'Wszystkie'],
+    'danie_glowne' => ['ikona' => 'bi-egg-fried',       'nazwa' => 'Dania główne'],
+    'zupa'      => ['ikona' => 'bi-cup-hot-fill',        'nazwa' => 'Zupy'],
+    'salatka'   => ['ikona' => 'bi-tree-fill',           'nazwa' => 'Sałatki'],
+    'dodatek'   => ['ikona' => 'bi-basket-fill',         'nazwa' => 'Dodatki'],
+    'dziecięce' => ['ikona' => 'bi-balloon-heart-fill',  'nazwa' => 'Dla najmłodszych'],
+];
+
+// =============================================
+// DANE UŻYTKOWNIKA Z SESJI
+// =============================================
+$jest_zalogowany = isset($_SESSION['user']);
+$jest_adminem    = isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] == true;
+$ilosc_w_koszyku = ($jest_zalogowany && isset($_SESSION['cart']))
+                    ? array_sum($_SESSION['cart'])
+                    : 0;
+
+// =============================================
+// POBIERZ DANIA Z BAZY DANYCH
+// =============================================
+$zapytanie = "SELECT nazwaPotrawy, opis, cena, id, typ FROM menu";
+$wynik     = mysqli_query($conn, $zapytanie);
+if (!$wynik) {
+    die("Błąd zapytania: " . mysqli_error($conn));
+}
+// Wczytaj wszystkie wiersze do tablicy żeby nie mieszać PHP z HTML poniżej
+$dania = [];
+while ($wiersz = mysqli_fetch_row($wynik)) {
+    $dania[] = $wiersz;
+}
 ?>
 <!DOCTYPE html>
 <html lang="pl">
@@ -18,11 +59,8 @@ unset($_SESSION["succ"]);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KresowaJeden - Menu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
-    <!-- https://icons.getbootstrap.com/ -->
-    
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-dark">
     <header>
@@ -31,7 +69,7 @@ unset($_SESSION["succ"]);
                 <h3 class="navbar-text  mx-2 my-1">KresowaJeden</h3>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item mx-3 my-1">
-                        <a href="<?=INDEX?>" class="btn btn-outline-success">Home</a>
+                        <a href="/index.php" class="btn btn-outline-success">Home</a>
                     </li>
                     <li class="nav-item mx-3 my-1">
                         <a href="<?=VIEWMENU?>" class="btn btn-outline-success active">Menu</a>
@@ -58,7 +96,7 @@ unset($_SESSION["succ"]);
                                     <a href="#" class="btn btn-outline-success">Rezerwacja</a>
                                 </li>  
                                 <li class="nav-item mx-3 my-1">
-                                    <a href="'.CONTACT.'" class="btn btn-outline-success">Kontakt</a>
+                                    <a href="#" class="btn btn-outline-success">Kontakt</a>
                                 </li>                                                           
                             ';
                         }                        
@@ -118,153 +156,194 @@ unset($_SESSION["succ"]);
                         </div>
                     </div>
                 </div>
-                <?php endwhile; ?>
             </div>
         </div>
-    </main>
-    <!-- MODAL LOGOWANIA -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="loginModalLabel">Zaloguj się</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div> 
-                
-                
-    <!-- FORMULARZ LOGOWANIA -->
-                <form action="<?=LOGIN?>" method="POST">
-                    <div class="modal-body">
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder=" ">
-                            <label for="email">Email</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="pswd" name="pswd" placeholder=" ">
-                            <label for="pswd">Hasło</label>
-                        </div>                   
-                            <a href="#" class="d-block text-center m-1 p-1 border rounded-1 border-primary lead text-decoration-none text-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
-                                Zarejestruj się.
-                            </a>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Zaloguj</button>
-                        <button type="reset" class="btn btn-danger">Resetuj</button>
-                    </div>
-                </form>
-            </div>
-        </div>  
-    </div>    
-                    
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>     
-            
-                    <!-- MODAL REJESTRACJI -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="registerModalLabel">Zarejestruj się</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-
-                <!-- FORMULARZ REJESTRACJI -->
-                <form action="<?=REGISTER?>" method="POST">
-                    <div class="modal-body">
-
-                        <div class="form-floating mb-3">
-                            <input type="name" class="form-control" id="name" name="name" placeholder=" ">
-                            <label for="name">Imie</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder=" ">
-                            <label for="email">Email</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="pswd" name="pswd" placeholder=" ">
-                            <label for="pswd">Hasło</label>
-                        </div>                        
-                        <div class="form-floating mb-3">
-                            <input type="tel" class="form-control" id="phone" name="phone" placeholder=" ">
-                            <label for="phone">Numer Telefonu</label>
-                        </div>
-                        <a href="#" class="d-block text-center m-1 p-1 border rounded-1 border-primary lead text-decoration-none text-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
-                            Zaloguj się
-                        </a>                  
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Zarejestruj</button>
-                        <button type="reset" class="btn btn-danger">Resetuj</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 
+</div>
+</main>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-                <!-- TOAST ERROR -->
-                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-                    <?php if ($error): ?>
-                    <div id="loginToastERR" class="toast align-items-center text-bg-danger border-0" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <?= htmlspecialchars($error) ?>
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                        </div>
+<!-- =============================================
+     MODAL LOGOWANIA
+============================================= -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="loginModalLabel">Zaloguj się</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="<?= LOGIN ?>" method="POST">
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="loginEmail" name="email" placeholder=" ">
+                        <label for="loginEmail">Email</label>
                     </div>
-                    <?php endif; ?>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="loginPswd" name="pswd" placeholder=" ">
+                        <label for="loginPswd">Hasło</label>
+                    </div>
+                    <!-- Link przełączający na modal rejestracji -->
+                    <a href="#" class="d-block text-center m-1 p-1 border rounded-1 border-primary text-decoration-none text-primary"
+                       data-bs-toggle="modal" data-bs-target="#registerModal">
+                        Zarejestruj się
+                    </a>
                 </div>
-                <!-- TOAST SUCCESS -->
-                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-                    <?php if ($succ): ?>
-                    <div id="loginToastSUCC" class="toast align-items-center text-bg-success border-0" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <?= htmlspecialchars($succ) ?>
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                        </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Zaloguj</button>
+                    <button type="reset"  class="btn btn-danger">Resetuj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- =============================================
+     MODAL REJESTRACJI
+============================================= -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="registerModalLabel">Zarejestruj się</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="<?= REGISTER ?>" method="POST">
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="text"     class="form-control" id="regName"  name="name"  placeholder=" ">
+                        <label for="regName">Imię</label>
                     </div>
-                    <?php endif; ?>
-                </div>                
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>    
-<?php if ($error): ?>
+                    <div class="form-floating mb-3">
+                        <input type="email"    class="form-control" id="regEmail" name="email" placeholder=" ">
+                        <label for="regEmail">Email</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="regPswd"  name="pswd"  placeholder=" ">
+                        <label for="regPswd">Hasło</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="tel"      class="form-control" id="regPhone" name="phone" placeholder=" ">
+                        <label for="regPhone">Numer telefonu</label>
+                    </div>
+                    <!-- Link przełączający z powrotem na modal logowania -->
+                    <a href="#" class="d-block text-center m-1 p-1 border rounded-1 border-primary text-decoration-none text-primary"
+                       data-bs-toggle="modal" data-bs-target="#loginModal">
+                        Zaloguj się
+                    </a>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Zarejestruj</button>
+                    <button type="reset"  class="btn btn-danger">Resetuj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- =============================================
+     POWIADOMIENIA (TOASTY)
+============================================= -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+
+    <?php if ($blad): ?>
+    <!-- Toast błędu (czerwony) -->
+    <div id="toastBlad" class="toast align-items-center text-bg-danger border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body"><?= htmlspecialchars($blad) ?></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($sukces): ?>
+    <!-- Toast sukcesu (zielony) -->
+    <div id="toastSukces" class="toast align-items-center text-bg-success border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body"><?= htmlspecialchars($sukces) ?></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+    <?php endif; ?>
+
+</div>
+
+<!-- =============================================
+     SKRYPTY JS
+============================================= -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    var modal = new bootstrap.Modal(document.getElementById('<?= $error_modal ?>'));
+
+// -----------------------------------------------
+// SŁOWNIK: klucz kategorii → polska nazwa
+// (używane do aktualizacji napisu nad kartami)
+// -----------------------------------------------
+const nazwyKategorii = {
+    all:          'Wszystkie dania',
+    danie_glowne: 'Dania główne',
+    zupa:         'Zupy',
+    salatka:      'Sałatki',
+    dodatek:      'Dodatki',
+    dziecięce:    'Dla najmłodszych'
+};
+
+// -----------------------------------------------
+// FILTROWANIE MENU po kliknięciu kafelka
+// cat  - klucz kategorii np. 'zupa'
+// klik - kliknięty element HTML (kafelek)
+// -----------------------------------------------
+function filterMenu(cat, klik) {
+
+    // 1. Zresetuj wygląd wszystkich kafelków na szary
+    document.querySelectorAll('.cat-tile').forEach(function(kafelek) {
+        kafelek.classList.remove('bg-success', 'text-white', 'border-success');
+        kafelek.classList.add('text-secondary', 'border-secondary', 'bg-dark');
+    });
+
+    // 2. Podświetl kliknięty kafelek na zielono
+    klik.classList.remove('text-secondary', 'border-secondary', 'bg-dark');
+    klik.classList.add('bg-success', 'text-white', 'border-success');
+
+    // 3. Zaktualizuj napis nad kartami
+    document.getElementById('cat-label').textContent = nazwyKategorii[cat] ?? cat;
+
+    // 4. Pokaż lub ukryj karty dań
+    document.querySelectorAll('.menu-item').forEach(function(karta) {
+        // Pokaż jeśli: wybrano "all" LUB data-cat karty pasuje do kategorii
+        var czyPokazac = (cat === 'all' || karta.dataset.cat === cat);
+        karta.style.display = czyPokazac ? '' : 'none';
+    });
+}
+
+// -----------------------------------------------
+// PO ZAŁADOWANIU STRONY
+// -----------------------------------------------
+document.addEventListener('DOMContentLoaded', function() {
+
+    // Podświetl kafelek "Wszystkie" jako domyślny
+    var kafelekWszystkie = document.querySelector('[data-cat="all"]');
+    kafelekWszystkie.classList.remove('text-secondary', 'border-secondary', 'bg-dark');
+    kafelekWszystkie.classList.add('bg-success', 'text-white', 'border-success');
+
+    <?php if ($blad): ?>
+    // Otwórz modal przy błędzie (np. loginModal przy złym haśle)
+    var modal = new bootstrap.Modal(document.getElementById('<?= $modal_bledu ?>'));
     modal.show();
 
-    var toastEl = document.getElementById('loginToastERR');
-    var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
-    toast.show();
+    // Pokaż czerwony toast z treścią błędu
+    var toastBlad = new bootstrap.Toast(document.getElementById('toastBlad'), { delay: 3000 });
+    toastBlad.show();
+    <?php endif; ?>
+
+    <?php if ($sukces): ?>
+    // Pokaż zielony toast z komunikatem sukcesu
+    var toastSukces = new bootstrap.Toast(document.getElementById('toastSukces'), { delay: 3000 });
+    toastSukces.show();
+    <?php endif; ?>
+
 });
 </script>
-<?php endif; ?>
-<?php if ($succ): ?>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var toastEl = document.getElementById('loginToastSUCC');
-    var toast = new bootstrap.Toast(toastEl, {
-        delay: 3000
-    });
-    toast.show();
-});
-</script>
-<?php endif; ?>
+
 </body>
 </html>
