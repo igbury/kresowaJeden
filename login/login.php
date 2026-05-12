@@ -10,6 +10,7 @@ session_start();
 require_once __DIR__ . '/../db.php'; 
 require_once __DIR__ . '/../paths.php';
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    header("Location: " . INDEX);
     exit();
 }
 $_SESSION["error_modal"] = "loginModal";
@@ -44,11 +45,11 @@ if (empty($_POST["email"]) || empty($_POST["pswd"])) {
             $_SESSION['user'] = $_POST['email'];
             $_SESSION['isAdmin'] = (isset($row['isAdmin']) && $row['isAdmin'] == 1);
             $_SESSION["succ"] = "Zalogowano!";
-            header("Location: /index.php");
+            header("Location: ".INDEX);
             exit();
         }
     }
 $_SESSION["error"] = "Niepoprawny login lub hasło.";
-header("Location: /index.php");
+header("Location: ".INDEX);
 exit();
 ?>

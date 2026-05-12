@@ -40,9 +40,9 @@ CREATE TABLE `alergeny` (
 
 CREATE TABLE `klienci` (
   `idKlienta` int(11) NOT NULL,
-  `imie` text NOT NULL,
-  `haslo` text NOT NULL,
-  `email` text NOT NULL,
+  `imie` VARCHAR(255) NOT NULL,
+  `haslo` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) UNIQUE NOT NULL,
   `nr_telefonu` varchar(20) NOT NULL,
   `isAdmin` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -65,7 +65,7 @@ CREATE TABLE `menu` (
   `id` int(11) NOT NULL,
   `nazwaPotrawy` text NOT NULL,
   `opis` text NOT NULL,
-  `cena` float NOT NULL,
+  `cena` DECIMAL(10,2) NOT NULL,
   `dostepne` tinyint(1) NOT NULL,
   `typ` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -113,7 +113,7 @@ CREATE TABLE `oceny` (
   `idPotrawy` int(11) NOT NULL,
   `ocena` int(11) NOT NULL,
   `komentarz` text NOT NULL,
-  `dataOceny` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `dataOceny` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -137,7 +137,7 @@ CREATE TABLE `pozycje_zamowienia` (
 
 CREATE TABLE `pracownicy` (
   `id` int(11) NOT NULL,
-  `imie` text NOT NULL,
+  `imie` VARCHAR(255) NOT NULL,
   `pensja` float NOT NULL,
   `stanowisko` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -316,34 +316,34 @@ ALTER TABLE `zamowienia`
 -- Constraints for table `menu_alergeny`
 --
 ALTER TABLE `menu_alergeny`
-  ADD CONSTRAINT `fk_menualer_alergeny` FOREIGN KEY (`idAlergenu`) REFERENCES `alergeny` (`id`),
-  ADD CONSTRAINT `fk_menualer_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`);
+  ADD CONSTRAINT `fk_menualer_alergeny` FOREIGN KEY (`idAlergenu`) REFERENCES `alergeny` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_menualer_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `oceny`
 --
 ALTER TABLE `oceny`
-  ADD CONSTRAINT `fk_oceny_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`),
-  ADD CONSTRAINT `fk_oceny_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`);
+  ADD CONSTRAINT `fk_oceny_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_oceny_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `pozycje_zamowienia`
 --
 ALTER TABLE `pozycje_zamowienia`
-  ADD CONSTRAINT `fk_poz_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`),
-  ADD CONSTRAINT `fk_poz_zamowienia` FOREIGN KEY (`idZamowienia`) REFERENCES `zamowienia` (`id`);
+  ADD CONSTRAINT `fk_poz_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_poz_zamowienia` FOREIGN KEY (`idZamowienia`) REFERENCES `zamowienia` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `rezerwacje`
 --
 ALTER TABLE `rezerwacje`
-  ADD CONSTRAINT `fk_rezerwacje_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`);
+  ADD CONSTRAINT `fk_rezerwacje_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `zamowienia`
 --
 ALTER TABLE `zamowienia`
-  ADD CONSTRAINT `fk_zamowienia_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`);
+  ADD CONSTRAINT `fk_zamowienia_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -2,11 +2,14 @@
     session_start();
     require_once __DIR__ . '/../db.php'; 
     require_once __DIR__ . '/../paths.php';      
+    if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+        exit();
+    }    
     if(isset($_SESSION['user'])){
         $_SESSION["error_modal"] = "deleteModal";        
         $pass = $_POST["pass"];
         $confirmed = isset($_POST["confirm"]) ? 1 : 0; 
-        if(isset($pass)){
+        if(!empty($pass)){
             //sprawdza czy podano poprawne hasło
             $stmt = mysqli_prepare($conn, "SELECT haslo FROM klienci WHERE idKlienta=?");
             mysqli_stmt_bind_param($stmt, "i", $_SESSION['id']);

@@ -13,7 +13,7 @@
         if(empty($temat)){
             $temat = "Bez tematu";
         }
-        $_SESSION['succ'] = "Wiadomość o tytule ".$temat." została wysłana.";
+        $_SESSION['succ'] = "Wiadomość o tytule ".htmlspecialchars($temat)." została wysłana.";
         header("Location:".CONTACT);
         exit();
     }else{

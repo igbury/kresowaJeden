@@ -20,9 +20,14 @@
         $recenzja = "Brak komentarza";
     }
     if ($ocena !=null && $ocena >= 1 && $ocena <= 5 && $danie !== '') {
-        $sql = "INSERT INTO oceny
-        VALUES (null, '$klient', '$danie', $ocena, '$recenzja', NOW())";
-        mysqli_query($conn, $sql);
+        $stmt = mysqli_prepare($conn, "INSERT INTO oceny VALUES (null, ?, ?, ?, ?, NOW())");
+        if(!$stmt){
+            $_SESSION["error"] = "Błąd serwera.";
+            header("Location: ".INDEX);
+            exit();
+        }
+        mysqli_stmt_bind_param($stmt, "isis", $klient, $danie, $ocena, $recenzja);
+        mysqli_stmt_execute($stmt);
         $_SESSION["succ"] = "Wystawiono opinie.";
         header("Location: /index.php");
         exit();

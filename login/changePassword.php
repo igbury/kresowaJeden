@@ -1,12 +1,9 @@
 <?php
 session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 require_once __DIR__ . '/../db.php'; 
 require_once __DIR__ . '/../paths.php';  
 if ($_SERVER["REQUEST_METHOD"] !== "POST" || !isset($_SESSION['user'])) {
-    header("Location: index.php");
+    header("Location: ".INDEX);
     exit();
 }
 
@@ -37,6 +34,11 @@ if (!empty($_POST["oldPass"]) && !empty($_POST["newPass"]) && !empty($_POST["new
         $_SESSION["error"] = "Stare hasło jest nieprawidłowe.";
         header("Location:".VIEWACCOUNT);
         exit();
+    }    
+    if(strlen($newPass)<6){
+        $_SESSION["error"] = "Hasło musi być dłuższe niż 6 znaków.";
+        header("Location: ".VIEWACCOUNT);
+        exit();        
     }    
     // zmiana hasla 
     $hash = password_hash($newPass, PASSWORD_DEFAULT);

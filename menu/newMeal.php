@@ -6,11 +6,12 @@ require_once __DIR__ . '/../paths.php';
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit();
 }
-if($_SESSION['isAdmin']==false){
-    header("Location: /../index.php");
-    exit;
+if(!isset($_SESSION['isAdmin'])){
+    header("Location: ".INDEX);
+    exit();
 }
 $_SESSION["error_modal"] = "newMealModal";
+
 if (!empty($_POST["name"]) && !empty($_POST["price"])) {
     $name = mysqli_real_escape_string($conn, $_POST["name"]);
     $price = floatval($_POST["price"]);
@@ -20,11 +21,16 @@ if (!empty($_POST["name"]) && !empty($_POST["price"])) {
     }else{
         $desc = mysqli_real_escape_string($conn,$_POST["desc"]);
     }
-
-    $newMeal = "INSERT INTO menu VALUES(null, '$name', '$desc', '$price', $available)";
-    $addMeal = mysqli_query($conn, $newMeal);
+    if($price<1){
+        $_SESSION["error"] = "Cena musi być większa niż 0";
+        header("Location: ".MODIFYMENU);
+        exit();
+    }
+    $stmt = mysqli_prepare($conn, "INSERT INTO menu (nazwaPotrawy, opis, cena, dostepne) VALUES (?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, "ssdi", $name, $desc, $price, $available);
+    mysqli_stmt_execute($stmt);
     $_SESSION["succ"] = "Dodano nowe danie!";
-    header("Location:".MODIFYMENU);
+    header("Location: ".MODIFYMENU);
     exit();    
 }
 ?>

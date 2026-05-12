@@ -25,78 +25,10 @@ unset($_SESSION["succ"]);
     
 </head>
 <body class="bg-dark">
-    <header>
-        <nav class="navbar navbar-expand-sm border border-secondary bg-dark navbar-dark fixed-top">
-            <div class="container-fluid">
-                <h3 class="navbar-text  mx-2 my-1">KresowaJeden</h3>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item mx-3 my-1">
-                        <a href="<?=INDEX?>" class="btn btn-outline-success">Home</a>
-                    </li>
-                    <li class="nav-item mx-3 my-1">
-                        <a href="<?=VIEWMENU?>" class="btn btn-outline-success active">Menu</a>
-                    </li>
-                    <?php
-                        if(isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']==true){
-                            echo '
-                                <li class="nav-item mx-3 my-1">
-                                    <div class="dropend">
-                                        <a class="btn btn-outline-danger dropdown-toggle" role="button" data-bs-theme="dark" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Administracja
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-dark">
-                                            <li><a class="dropdown-item" href="'.MODIFYMENU.'">Modyfikuj menu</a></li>
-                                            <li><a class="dropdown-item disabled" href="#">Zarządzaj pracownikami</a></li>
-                                            <li><a class="dropdown-item disabled" href="#">Zarządzaj restauracją</a></li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            ';
-                        }else{
-                            echo '
-                                <li class="nav-item mx-3 my-1">
-                                    <a href="#" class="btn btn-outline-success">Rezerwacja</a>
-                                </li>  
-                                <li class="nav-item mx-3 my-1">
-                                    <a href="'.CONTACT.'" class="btn btn-outline-success">Kontakt</a>
-                                </li>                                                           
-                            ';
-                        }                        
-                    ?>      
-
-
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <?php
-                        if(isset($_SESSION['user'])){
-                            $count = isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : 0;
-                            echo '
-                                <li class="nav-item mx-2 my-1">
-                                    <a href="'.VIEWCART.'" class="btn btn-outline-light"><i class="bi bi-cart"></i> ' . $count . ' </a>
-                                </li>                            
-                                <li class="nav-item mx-2 my-1">
-                                    <a href="'.LOGOUT.'" class="btn btn-outline-danger">Wyloguj</a>
-                                </li>
-                            ';
-                        }else{
-                            echo '
-                                <li class="nav-item mx-2 my-1">
-                                    <a href="'.VIEWCART.'" class="btn btn-outline-light disabled"><i class="bi bi-cart"></i></a>
-                                </li>  
-                                <li class="nav-item mx-2 my-1">
-                                    <a href="'.LOGIN.'" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
-                                </li>                              
-                            ';
-                        }                        
-                    ?>                    
-                </ul>            
-            </div>
-            
-        </nav>
-    </header>
+<?php include ROOT . '/navbar.php'; ?>
     <!-- polaczenie z baza danych -->
     <?php
-        $z = "SELECT menu.nazwaPotrawy, menu.opis, menu.cena, menu.id FROM menu";
+        $z = "SELECT menu.nazwaPotrawy, menu.opis, menu.cena, menu.id FROM menu where dostepne=1";
         $r = mysqli_query($conn, $z);
         ?>
 
@@ -108,11 +40,11 @@ unset($_SESSION["succ"]);
                 <div class="col">
                     <div class="card h-100 bg-dark text-light border-secondary">
                         <div class="card-body py-4 my-3">   
-                            <h5 class="card-title"><?php echo $wiersz[0]; ?></h5>
-                            <p class="card-text "><?php echo $wiersz[1]; ?></p>
-                            <p class="card-text"><strong>Cena: </strong><?php echo $wiersz[2]; ?> zł</p>
+                            <h5 class="card-title"><?php echo htmlspecialchars($wiersz[0]); ?></h5>
+                            <p class="card-text "><?php echo htmlspecialchars($wiersz[1]); ?></p>
+                            <p class="card-text"><strong>Cena: </strong><?php echo htmlspecialchars($wiersz[2]); ?> zł</p>
                             <form action='<?=ADDTOCART?>' method='POST'>
-                                <input type='hidden' name='id' value='<?php echo $wiersz[3]; ?>'>
+                                <input type='hidden' name='id' value='<?php echo htmlspecialchars($wiersz[3]); ?>'>
                                 <button type='submit' class='btn text-light btn-outline-secondary btn-sm'>Dodaj do koszyka</button>
                             </form>
                         </div>
@@ -156,7 +88,7 @@ unset($_SESSION["succ"]);
         </div>  
     </div>    
                     
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>     
+            
             
                     <!-- MODAL REJESTRACJI -->
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
@@ -216,32 +148,7 @@ unset($_SESSION["succ"]);
 
 
 
-                <!-- TOAST ERROR -->
-                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-                    <?php if ($error): ?>
-                    <div id="loginToastERR" class="toast align-items-center text-bg-danger border-0" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <?= htmlspecialchars($error) ?>
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-                <!-- TOAST SUCCESS -->
-                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-                    <?php if ($succ): ?>
-                    <div id="loginToastSUCC" class="toast align-items-center text-bg-success border-0" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <?= htmlspecialchars($succ) ?>
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>                
+    <?php include ROOT . '/toast.php'; ?>         
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>    
 <?php if ($error): ?>
 <script>

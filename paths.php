@@ -1,8 +1,4 @@
 <?php
-    /*
-require_once __DIR__ . '/../db.php'; 
-require_once __DIR__ . '/../paths.php';    
-    */
     define('ROOT', __DIR__);
     define('LOGIN_DIR', "/login");
     define('CART_DIR', "/cart");

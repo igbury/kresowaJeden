@@ -14,7 +14,14 @@ if(!isset($_SESSION['user'])){
 }
     if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['id'])){
         $id = (int)$_POST['id'];
-
+        $stmt = "SELECT id FROM menu WHERE id=?";
+        mysqli_bind_param($stmt, 'i', $id);
+        $result = mysqli_stmt_execute($stmt);
+        if(!$result || mysqli_num_rows($result)==0){
+            $_SESSION['error'] = 'Niepoprawne danie.';
+            header("Location: ".$redirect);
+            exit();
+        }
         if(!isset($_SESSION['cart'])){
             $_SESSION['cart'] = [];
         }
@@ -30,5 +37,5 @@ if(!isset($_SESSION['user'])){
     }
 
     header("Location:".$redirect);
-    exit;
+    exit();
 ?>

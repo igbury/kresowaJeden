@@ -19,3 +19,7 @@ try {
     die("Błąd konfiguracji pliku .env: " . $e->getMessage());
 }
 $conn = mysqli_connect($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASS'], $_ENV['DB_NAME']);
+mysqli_set_charset($conn, 'utf8mb4');
+if (!$conn) {
+    die("Błąd połączenia z bazą: " . mysqli_connect_error());
+}

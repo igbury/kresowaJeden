@@ -17,10 +17,19 @@ if (!empty($_POST["name"]) && !empty($_POST["email"]) && !empty($_POST["pswd"]) 
 
     if ($validate && mysqli_num_rows($validate) > 0) {
         $_SESSION["error"] = "Uzytkownik o tym loginie juz istnieje.";
-        header("Location: /../index.php");
+        header("Location: ".INDEX);
         exit();
     }
-
+    if(strlen($_POST['pswd'])<6){
+        $_SESSION["error"] = "Hasło musi być dłuższe niż 6 znaków.";
+        header("Location: ".INDEX);
+        exit();        
+    }
+    if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
+        $_SESSION["error"] = "Niepoprawny email.";
+        header("Location: ".INDEX);
+        exit();          
+    }
     // dodaj nowego uzytkownika
     $hash = password_hash($_POST["pswd"], PASSWORD_DEFAULT);
     $stmt2 = mysqli_prepare($conn, "INSERT INTO klienci VALUES (null, ?, ?, ?, ?, false)");
@@ -28,12 +37,12 @@ if (!empty($_POST["name"]) && !empty($_POST["email"]) && !empty($_POST["pswd"]) 
     mysqli_stmt_execute($stmt2);
 
     $_SESSION["succ"] = "Zarejestrowano!";
-    header("Location: /../index.php");
+    header("Location: ".INDEX);
     exit();
 
 } else {
     $_SESSION["error"] = "Musisz wypelnic dane.";
-    header("Location: /../index.php");
+    header("Location: ".INDEX);
     exit();
 }
 ?>

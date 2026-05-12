@@ -27,39 +27,7 @@ unset($_SESSION["succ"]);
 </head>    
 <body class="bg-dark">
     <!-- NAVBAR -->
-    <header>
-        <nav class="navbar navbar-expand-sm border border-secondary bg-dark navbar-dark fixed-top">
-            <div class="container-fluid">
-                <h3 class="navbar-text text-white mx-2 my-1">KresowaJeden</h3>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item mx-3 my-1">
-                        <a href="<?=INDEX?>" class="btn btn-outline-success text-white">Home</a>
-                    </li>
-                    <li class="nav-item mx-3 my-1">
-                        <a href="<?=VIEWMENU?>" class="btn btn-outline-success text-white">Menu</a>
-                    </li>
-                    <li class="nav-item mx-3 my-1">
-                        <div class="dropend">
-                            <a class="btn btn-outline-danger text-white dropdown-toggle" role="button" data-bs-theme="dark" data-bs-toggle="dropdown" aria-expanded="false">
-                                Administracja
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-dark">
-                                <li><a class="dropdown-item" href="modifyMenu.php">Modyfikuj menu</a></li>
-                                <li><a class="dropdown-item disabled" href="#">Zarządzaj pracownikami</a></li>
-                                <li><a class="dropdown-item disabled" href="#">Zarządzaj restauracją</a></li>
-                            </ul>
-                        </div>
-                    </li>    
-                </ul>
-                <ul class="navbar-nav ms-auto">                           
-                    <li class="nav-item mx-2 my-1">
-                        <a href="<?=LOGOUT?>" class="btn text-white btn-outline-danger">Wyloguj</a>
-                    </li>
-                </ul>            
-            </div>
-            
-        </nav>
-    </header>
+    <?php include ROOT . '/navbar.php'; ?>
 
     <!-- MAIN -->
     <main class="bg-dark">
@@ -85,8 +53,8 @@ unset($_SESSION["succ"]);
                         while($row = $result ->fetch_assoc()){
                             echo '<tr>';
                             echo "<th scope='row'>{$row['id']}</th>";
-                            echo "<td>{$row['nazwaPotrawy']}</td>";
-                            echo "<td>{$row['opis']}</td>";
+                            echo "<td>".htmlspecialchars($row['nazwaPotrawy'])."</td>";
+                            echo "<td>" . htmlspecialchars($row['opis'] ?: "Brak opisu", ENT_QUOTES, 'UTF-8') . "</td>";
                             echo "<td>{$row['cena']}zł</td>";
                             echo "<td>" . ($row['dostepne'] == 1 ? 'tak' : 'nie') . "</td>";
                             echo "<td style='width:1%'>
@@ -138,8 +106,30 @@ unset($_SESSION["succ"]);
         </div>
     </div>
     
-    
+    <?php include ROOT . '/toast.php'; ?>      
     
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<?php if ($error): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var modal = new bootstrap.Modal(document.getElementById('<?= $error_modal ?>'));
+    modal.show();
+
+    var toastEl = document.getElementById('toastERR');
+    var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    toast.show();
+});
+</script>
+<?php endif; ?>
+
+<?php if ($succ): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var toastEl = document.getElementById('toastSUCC');
+    var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    toast.show();
+});
+</script>
+<?php endif; ?>
 </body>
 </html>
