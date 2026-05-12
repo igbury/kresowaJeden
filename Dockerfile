@@ -1,8 +1,16 @@
 FROM php:8.2-apache
 
+RUN apt-get update && apt-get install -y unzip && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 RUN docker-php-ext-install mysqli
 
 COPY . /var/www/html/
+
+RUN rm -f /var/www/html/.env /var/www/html/vendor/.env
+
+WORKDIR /var/www/html
+RUN composer install --no-dev --optimize-autoloader
 
 EXPOSE 80
 
