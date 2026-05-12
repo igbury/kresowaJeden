@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 require_once __DIR__ . '/../db.php'; 
@@ -134,10 +133,17 @@ unset($_SESSION["succ"]);
                                         echo "<td>" . $amount . "</td>";
                                         echo "<td style='width:1%'>
                                                 <div class='d-flex gap-1'>
+                                                    <form action='".ADDTOCART."' method='POST'>
+                                                        <input type='hidden' name='id' value='{$row['id']}'>
+                                                        <input type='hidden' name='redirect' value='cart'>
+                                                        <button type='submit' class='btn text-light btn-outline-success btn-sm'>
+                                                            <i class='bi bi-plus'></i>
+                                                        </button>
+                                                    </form>                                   
                                                     <form action='".REMOVEFROMCART."' method='POST'>
                                                         <input type='hidden' name='id' value='{$row['id']}'>
                                                         <input type='hidden' name='akcja' value='zmniejsz'>
-                                                        <button type='submit' class='btn btn-outline-warning btn-sm'>-</button>
+                                                        <button type='submit' class='btn btn-outline-warning btn-sm'><i class='bi bi-dash'></i></button>
                                                     </form>
                                                     <form action='".REMOVEFROMCART."' method='POST'>
                                                         <input type='hidden' name='id' value='{$row['id']}'>

@@ -16,14 +16,14 @@ $_SESSION["error_modal"] = "loginModal";
 
 if (empty($_POST["email"]) || empty($_POST["pswd"])) {
     $_SESSION["error"] = "Musisz wpisać swoje dane.";
-    header("Location: /index.php");
+    header("Location: ".INDEX);
     exit();
 }
     //to robi zapytanie i podstawia ? jako placeholder na maila
     $stmt = mysqli_prepare($conn, "SELECT idKlienta, email, haslo, isAdmin FROM klienci WHERE email = ?");
     if(!$stmt){
         $_SESSION["error"] = "Błąd serwera.";
-        header("Location: /index.php");
+        header("Location: ".INDEX);
         exit();
     }
     //przypisuje z forma dane do placeholdera, 's' oznacza string

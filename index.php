@@ -103,14 +103,6 @@ unset($_SESSION["succ"]);
         <div class="container-fluid text-light py-5 mx-0 my-5 d-flex align-items-center">
             <div class="container bg- mx-5">
                 <h2 class="m-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt, eius.</h2>
-                <?php
-                    if(isset($_SESSION['user'])){
-                        echo "<h5>Zalogowany: ({$_SESSION['id']}) {$_SESSION['user']} </h5>";
-                        if($_SESSION['isAdmin']==true){
-                            echo "<p>Admin</p>";
-                        }
-                    }
-                ?>
                 <a href="menu.php" class="btn btn-outline-danger mx-5 my-3">Zobacz Menu</a>
                 <a href="rezerwacja.php" class="btn btn-outline-light">Zarezerwuj Stolik</a>
                 <a href="ocen.php" class="btn btn-outline-danger mx-5 my-3" data-bs-toggle="modal" data-bs-target="#ocenaModal">Ocen danie</a>
@@ -121,11 +113,25 @@ unset($_SESSION["succ"]);
                         <p class="text-uppercase small text-light mb-0">lata działalności</p>
                     </div>
                     <div class="col border border-secondary p-3">
-                        <h1 class="text-warning fw-bold">14</h1>
+                        <h1 class="text-warning fw-bold">
+                            <?php
+                                $sql = "SELECT COUNT(id) FROM menu;";
+                                $result = mysqli_query($conn, $sql);
+                                $row = mysqli_fetch_row($result);
+                                echo $row[0];
+                            ?>
+                        </h1>
                         <p class="text-uppercase small text-light mb-0">dań w menu</p>
                     </div>
                     <div class="col border border-secondary p-3">
-                        <h1 class="text-warning fw-bold">5.0</h1>
+                        <h1 class="text-warning fw-bold">
+                            <?php
+                                $sql = "SELECT AVG(ocena) FROM oceny;";
+                                $result = mysqli_query($conn, $sql);
+                                $row = mysqli_fetch_row($result);
+                                echo round($row[0], 1);
+                            ?>                            
+                        </h1>
                         <p class="text-uppercase small text-light mb-0">ocen gości</p>
                     </div>
                 </div>

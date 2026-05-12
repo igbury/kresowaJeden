@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/../paths.php';
 if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['id'])){
     $id = (int)$_POST['id'];
     $akcja = $_POST['akcja'] ?? 'usun';
@@ -14,6 +15,6 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['id'])){
         unset($_SESSION['cart'][$id]);
     }
 }
-header("Location:".VIEWCART);
+header("Location: ".VIEWCART);
 exit;
 ?>

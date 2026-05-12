@@ -2,11 +2,14 @@
     session_start();
     require_once __DIR__ . '/../paths.php';
     $_SESSION["error_modal"] = "cartModal";
-
+    $redirect = VIEWMENU;
+    if (isset($_POST['redirect']) && $_POST['redirect'] === 'cart') {
+        $redirect = VIEWCART;
+    }
 if(!isset($_SESSION['user'])){
     $_SESSION["error"] = "Musisz być zalogowany, aby dodać do koszyka!";
     $_SESSION["error_modal"] = "loginModal";
-    header("Location: ../menu.php");
+    header("Location:".VIEWMENU);
     exit();
 }
     if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['id'])){
@@ -22,10 +25,10 @@ if(!isset($_SESSION['user'])){
             $_SESSION['cart'][$id] = 1;
         }
             $_SESSION["succ"] = "Dodano potrawę do koszyka!";
-            header("Location: ".VIEWMENU);
+            header("Location: ".$redirect);
             exit();        
     }
 
-    header("Location:".VIEWMENU);
+    header("Location:".$redirect);
     exit;
 ?>
