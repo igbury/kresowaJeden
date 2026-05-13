@@ -55,11 +55,13 @@ unset($_SESSION["succ"]);
                                 foreach($_SESSION['cart'] as $mealId=>$amount){
                                     $id = (int)$mealId;
                                     $ilosc = (int)$amount;
-                                    $sql = "SELECT id,nazwaPotrawy,cena FROM menu WHERE id=$id";
-                                    $result = mysqli_query($conn, $sql);
+                                    $stmt = mysqli_prepare($conn, "SELECT id,nazwaPotrawy,cena FROM menu WHERE id=?");
+                                    mysqli_stmt_bind_param($stmt, "i", $id);
+                                    mysqli_stmt_execute($stmt);
+                                    $result = mysqli_stmt_get_result($stmt);
                                     $row = mysqli_fetch_assoc($result);                                   
                                     if($row){
-                                        $sumaCen += $row['cena']*$amount;
+                                        $sumaCen += number_format($row['cena']*$amount);
                                         echo '<tr>';
                                         echo "<td>{$row['nazwaPotrawy']}</td>";
                                         echo "<td>{$row['cena']}zł</td>";
@@ -106,32 +108,8 @@ unset($_SESSION["succ"]);
                 ?>
             </div>            
         </div>
-        <!-- TOAST ERROR -->
-                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-                    <?php if ($error): ?>
-                    <div id="loginToastERR" class="toast align-items-center text-bg-danger border-0" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <?= htmlspecialchars($error) ?>
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-                <!-- TOAST SUCCESS -->
-                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-                    <?php if ($succ): ?>
-                    <div id="loginToastSUCC" class="toast align-items-center text-bg-success border-0" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <?= htmlspecialchars($succ) ?>
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>                
+    </main>
+    <?php include ROOT . '/toast.php'; ?>                 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 
@@ -141,19 +119,18 @@ document.addEventListener('DOMContentLoaded', function () {
     var modal = new bootstrap.Modal(document.getElementById('<?= $error_modal ?>'));
     modal.show();
 
-    var toastEl = document.getElementById('loginToastERR');
+    var toastEl = document.getElementById('toastERR');
     var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
     toast.show();
 });
 </script>
 <?php endif; ?>
+
 <?php if ($succ): ?>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var toastEl = document.getElementById('loginToastSUCC');
-    var toast = new bootstrap.Toast(toastEl, {
-        delay: 3000
-    });
+    var toastEl = document.getElementById('toastSUCC');
+    var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
     toast.show();
 });
 </script>

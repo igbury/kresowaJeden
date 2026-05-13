@@ -58,7 +58,7 @@ $klient = mysqli_fetch_assoc($result);
                     <div class="row">
                         <div class="col-2 text-secondary">Telefon</div>
                         <div class="col-4 text-light"><?=htmlspecialchars($klient['nr_telefonu'])?></div>
-                    </div>
+                    </div>                    
                 </div>
             </div>
             <!--ZMIANA HASLA-->
@@ -89,7 +89,7 @@ $klient = mysqli_fetch_assoc($result);
                     <i class="bi bi-exclamation-diamond-fill me-2 text-danger"></i>Usuń konto
                 </div>
                 <div class="card-body">
-                    <p class="text-secondary small mb-3">Usunięcie konta jest nieodwracalne. Wszystkie Twoje dane zostaną trawle usunięte.</p>
+                    <p class="text-secondary small mb-3">Usunięcie konta jest nieodwracalne. Wszystkie Twoje dane zostaną trwale usunięte.</p>
                     <button class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteModal">
                         <i class="bi bi-trash-fill me-2"></i>Usuń konto
                     </button>
@@ -124,6 +124,10 @@ $klient = mysqli_fetch_assoc($result);
                             <input type="tel" name="nr_telefonu" placeholder="" value="<?=htmlspecialchars($klient['nr_telefonu'])?>" id="nr_telefonu" class="form-control bg-dark text-light border-secondary">
                             <label for="nr_telefonu" class="text-secondary">Numer telefonu</label>
                         </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" name="password" placeholder="" id="password" class="form-control bg-dark text-light border-secondary">
+                            <label for="password" class="text-secondary">Obecne hasło</label>
+                        </div>                        
                     </div>
                     <div class="modal-footer border-secondary">
                         <button type="submit" class="btn btn-success">Zapisz</button>

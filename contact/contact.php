@@ -3,10 +3,7 @@ session_start();
 require_once __DIR__ . '/../db.php'; 
 require_once __DIR__ . '/../paths.php';
 
-if(!isset($_SESSION['user'])){
-    header("Location:".INDEX);
-    exit();
-}
+
 $error = $_SESSION["error"] ?? null;
 $succ = $_SESSION["succ"] ?? null;
 unset($_SESSION["error"], $_SESSION["succ"]);
@@ -101,7 +98,11 @@ unset($_SESSION["error"], $_SESSION["succ"]);
                             <textarea name="wiadomosc" id="wiadomosc" placeholder="" class="form-control bg-dark text-light border-secondary" style="height: 140px;"></textarea>
                             <label for="wiadomosc" class="text-secondary">Wiadomość</label>
                         </div>
+                    <?php if(isset($_SESSION['user'])):?>
                         <button type="submit" class="btn btn-outline-success w-100">
+                    <?php else: ?>
+                        <button type="submit" class="btn btn-outline-success w-100 disabled">
+                    <?php endif;?>                                
                             <i class="bi bi-send-fill me-2"></i>Wyślij
                         </button>
                     </form>
@@ -110,7 +111,7 @@ unset($_SESSION["error"], $_SESSION["succ"]);
 
         </div>
     </main>
-
+    <?php include LOGINMODALS; ?> 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

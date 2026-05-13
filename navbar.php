@@ -1,3 +1,4 @@
+<?session_start();?>
 <header>
     <nav class="navbar navbar-expand-sm border border-secondary bg-dark navbar-dark fixed-top">
         <div class="container-fluid">
@@ -22,9 +23,13 @@
                         </div>
                     </li>
                 <?php else: ?>
-                    <li class="nav-item mx-3 my-1">
-                        <a href="<?=BOOK?>" class="btn btn-outline-success">Rezerwacja</a>
-                    </li>                    
+                    <li class="nav-item mx-2 my-1">
+                        <?php if(isset($_SESSION['user'])): ?>
+                            <a href="#" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#bookModal1">Rezerwacja</a>
+                        <?php else: ?>
+                            <a href="#" class="btn btn-outline-secondary disabled" data-bs-toggle="modal" data-bs-target="#bookModal1">Rezerwacja</a>
+                        <?php endif; ?>
+                    </li>                  
                     <li class="nav-item mx-3 my-1">
                         <a href="<?=CONTACT?>" class="btn btn-outline-success">Kontakt</a>
                     </li>
@@ -53,7 +58,7 @@
                         </a>
                     </li>
                     <li class="nav-item mx-2 my-1">
-                        <a href="#" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login.</a>
+                        <a href="#" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
                     </li>
                 <?php endif; ?>
             </ul>

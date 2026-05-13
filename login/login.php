@@ -45,6 +45,7 @@ if (empty($_POST["email"]) || empty($_POST["pswd"])) {
             $_SESSION['user'] = $_POST['email'];
             $_SESSION['isAdmin'] = (isset($row['isAdmin']) && $row['isAdmin'] == 1);
             $_SESSION["succ"] = "Zalogowano!";
+            session_regenerate_id(true);
             header("Location: ".INDEX);
             exit();
         }

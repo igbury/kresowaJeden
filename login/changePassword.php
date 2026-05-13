@@ -23,6 +23,11 @@ if (!empty($_POST["oldPass"]) && !empty($_POST["newPass"]) && !empty($_POST["new
         header("Location:".VIEWACCOUNT);
         exit();        
     }
+    if(strlen($newPass)<6){
+        $_SESSION["error"] = "Hasło musi być dłuższe niż 6 znaków.";
+        header("Location: ".VIEWACCOUNT);
+        exit();        
+    }     
     //sprawdza czy stare haslo sie zgadza
     $stmt = mysqli_prepare($conn, "SELECT haslo FROM klienci WHERE idKlienta=?");
     mysqli_stmt_bind_param($stmt, "i", $_SESSION['id']);
@@ -34,11 +39,6 @@ if (!empty($_POST["oldPass"]) && !empty($_POST["newPass"]) && !empty($_POST["new
         $_SESSION["error"] = "Stare hasło jest nieprawidłowe.";
         header("Location:".VIEWACCOUNT);
         exit();
-    }    
-    if(strlen($newPass)<6){
-        $_SESSION["error"] = "Hasło musi być dłuższe niż 6 znaków.";
-        header("Location: ".VIEWACCOUNT);
-        exit();        
     }    
     // zmiana hasla 
     $hash = password_hash($newPass, PASSWORD_DEFAULT);

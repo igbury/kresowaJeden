@@ -4,6 +4,7 @@
     define('CART_DIR', "/cart");
     define('MENU_DIR', "/menu");
     define('CONTACT_DIR', "/contact");
+    define('MODAL_DIR', "/modals");
     define('BASE_URL', '');
 
     //Main
@@ -21,6 +22,9 @@
     define('CHANGEPASSWORD', LOGIN_DIR . '/changePassword.php');
     define('REMOVEUSER', LOGIN_DIR . '/removeUser.php');
     define('UPDATEACCOUNT', LOGIN_DIR . '/updateAccount.php');
+    //Modale
+    define('LOGINMODALS', ROOT.MODAL_DIR . '/login.php');
+    define('BOOKMODALS', ROOT.MODAL_DIR . '/book.php');
     //Koszyk
     define ('ADDTOCART', CART_DIR. '/addToCart.php');
     define ('VIEWCART', CART_DIR. '/cart.php');

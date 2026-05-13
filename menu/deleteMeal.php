@@ -7,13 +7,14 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit();
 }
 if (!isset($_SESSION['isAdmin']) || !$_SESSION['isAdmin']) {
-    header("Location: /index.php");
+    header("Location: ".INDEX);
     exit();
 }
 $id = (int)$_POST['id'];
 if($id>=1){
-    $sql = "DELETE FROM menu WHERE id = $id";
-    mysqli_query($conn, $sql);
+    $stmt = mysqli_prepare($conn, "DELETE FROM menu WHERE id=?;");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
     $_SESSION["succ"] = "Usunięto danie.";
 }else{
     $_SESSION["error"] = "Niepoprawne dane.";
