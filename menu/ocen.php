@@ -18,7 +18,7 @@
     mysqli_stmt_bind_param($stmt1, "i", $danie);
     mysqli_stmt_execute($stmt1);
     $result = mysqli_stmt_get_result($stmt1);
-    if ($result && mysqli_num_rows($result) < 0) {
+    if ($result && mysqli_num_rows($result) == 0) {
         var_dump($result);
         $_SESSION["error"] = "Podane danie nie istnieje.";
         header("Location: ".INDEX);

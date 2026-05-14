@@ -25,7 +25,7 @@ if(isset($_SESSION['user'])){
     mysqli_stmt_bind_param($stmt, "s", $newEmail);
     mysqli_stmt_execute($stmt);
     $validate = mysqli_stmt_get_result($stmt);    
-    $row = mysqli_fetch_assoc($result);
+    $row = mysqli_fetch_assoc($validate);
     if($row['email']==$newEmail){
         if ($validate && mysqli_num_rows($validate) > 0) {
             $_SESSION["error"] = "Ten email jest już zajęty.";

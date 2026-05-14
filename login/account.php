@@ -26,20 +26,21 @@ $klient = mysqli_fetch_assoc($result);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- https://icons.getbootstrap.com/ -->
+    <link rel="stylesheet" href="/style.css">  
 </head>    
-<body class="bg-dark">
+<body>
     <!-- NAVBAR -->
     <?php include ROOT . '/navbar.php'; ?>
 
     <!-- MAIN -->
-    <main class="bg-dark text-light" style="padding-top: 80px;">
+    <main style="padding-top: 80px;">
         <div class="container py-5" style="max-width: 700px;">
             <!-- NAGLOWEk-->
             <h3 class="mb-1"><i class="bi bi-person-square me-3"></i>Konto Klienta</h3>
             <p class="text-secondary mb-4"><?=htmlspecialchars($klient['email'])?></p>
             <hr class="border-secondary mb-4">
             <!--DANE KLIENTA-->
-            <div class="card bg-dark border border-success mb-4">
+            <div class="card border border-success mb-4">
                 <div class="card-header border-success d-flex justify-content-between text-light align-items-center">
                     <span><i class="bi bi-info-circle me-2"></i>Twoje dane</span>
                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal">
@@ -62,29 +63,29 @@ $klient = mysqli_fetch_assoc($result);
                 </div>
             </div>
             <!--ZMIANA HASLA-->
-            <div class="card bg-dark border border-warning mb-4">
+            <div class="card border border-warning mb-4">
                 <div class="card-header border-warning text-light">
                     <i class="bi bi-lock-fill text-warning me-2"></i>Zmiana hasła
                 </div>
                 <div class="card-body">
                     <form action="<?=CHANGEPASSWORD?>" method="post">
                         <div class="form-floating mb-3">
-                            <input type="password" placeholder="" name="oldPass" id="oldPass" class="form-control bg-dark text-light border-secondary">
+                            <input type="password" placeholder="" name="oldPass" id="oldPass" class="form-control text-light border-secondary">
                             <label for="oldPass" class="text-secondary">Obecne hasło</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="password" placeholder="" name="newPass" id="newPass" class="form-control bg-dark text-light border-secondary">
+                            <input type="password" placeholder="" name="newPass" id="newPass" class="form-control text-light border-secondary">
                             <label for="newPass" class="text-secondary">Nowe hasło</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="password" placeholder="" name="newPass2" id="newPass2" class="form-control bg-dark text-light border-secondary">
+                            <input type="password" placeholder="" name="newPass2" id="newPass2" class="form-control text-light border-secondary">
                             <label for="newPass2" class="text-secondary">Powtórz nowe hasło</label>
                         </div>
                         <button type="submit" class="btn btn-outline-warning w-100">Zmień hasło</button>
                     </form>
                 </div>
             </div>
-            <div class="card bg-dark border border-danger mb-4">
+            <div class="card border border-danger mb-4">
                 <div class="card-header border-danger text-light">
                     <i class="bi bi-exclamation-diamond-fill me-2 text-danger"></i>Usuń konto
                 </div>
@@ -104,7 +105,7 @@ $klient = mysqli_fetch_assoc($result);
 <!-- MODAL EDYCJI DANYCH -->
     <div class="modal fade" id="editModal" tabindex="-1">
         <div class="modal-dialog modal-sm">
-            <div class="modal-content bg-dark text-light border border-secondary">
+            <div class="modal-content text-light border border-secondary">
                 <div class="modal-header border-secondary">
                     <h4 class="modal-title">Edytuj swoje dane</h4>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -113,19 +114,19 @@ $klient = mysqli_fetch_assoc($result);
                 <form action="<?=UPDATEACCOUNT?>" method="POST">
                     <div class="modal-body">
                         <div class="form-floating mb-3">
-                            <input type="text" name="imie" placeholder="" value="<?=htmlspecialchars($klient['imie'])?>" id="imie" class="form-control bg-dark text-light border-secondary">
+                            <input type="text" name="imie" placeholder="" value="<?=htmlspecialchars($klient['imie'])?>" id="imie" class="form-control text-light border-secondary">
                             <label for="imie" class="text-secondary">Imię</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="email" name="email" placeholder="" value="<?=htmlspecialchars($klient['email'])?>" id="email" class="form-control bg-dark text-light border-secondary">
+                            <input type="email" name="email" placeholder="" value="<?=htmlspecialchars($klient['email'])?>" id="email" class="form-control text-light border-secondary">
                             <label for="email" class="text-secondary">Email</label>
                         </div>                                        
                         <div class="form-floating mb-3">
-                            <input type="tel" name="nr_telefonu" placeholder="" value="<?=htmlspecialchars($klient['nr_telefonu'])?>" id="nr_telefonu" class="form-control bg-dark text-light border-secondary">
+                            <input type="tel" name="nr_telefonu" placeholder="" value="<?=htmlspecialchars($klient['nr_telefonu'])?>" id="nr_telefonu" class="form-control text-light border-secondary">
                             <label for="nr_telefonu" class="text-secondary">Numer telefonu</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="password" name="password" placeholder="" id="password" class="form-control bg-dark text-light border-secondary">
+                            <input type="password" name="password" placeholder="" id="password" class="form-control text-light border-secondary">
                             <label for="password" class="text-secondary">Obecne hasło</label>
                         </div>                        
                     </div>
@@ -141,7 +142,7 @@ $klient = mysqli_fetch_assoc($result);
 <!-- MODAL POTWIERDZENIA USUNIECIA KONTA -->
     <div class="modal fade" id="deleteModal" tabindex="-1">
         <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light border border-secondary">
+            <div class="modal-content text-light border border-secondary">
                 <div class="modal-header border-secondary">
                     <h5 class="modal-title">
                         <i class="bi bi-exclamation-diamond-fill me-2 text-danger"></i>Potwierdź usunięcia konta
@@ -152,7 +153,7 @@ $klient = mysqli_fetch_assoc($result);
                 <form action="<?=REMOVEUSER?>" method="POST">
                     <div class="modal-body">            
                         <div class="form-floating mb-3">
-                            <input type="password" name="pass" placeholder="" id="pass" class="form-control bg-dark text-light border-secondary">
+                            <input type="password" name="pass" placeholder="" id="pass" class="form-control text-light border-secondary">
                             <label for="pass" class="text-secondary">Obecne hasło</label>
                         </div>
                         <div class="form-check mb-3">
@@ -163,7 +164,7 @@ $klient = mysqli_fetch_assoc($result);
                     </div>
                     <div class="modal-footer border-secondary">
                         <button type="submit" id="deleteBtn" class="btn btn-danger" disabled>
-                            Usuń konto (3)
+                            Usuń konto
                         </button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
                     </div>

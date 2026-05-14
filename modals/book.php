@@ -87,8 +87,8 @@
                                             echo "<option class='text-light' value='1{$i}'>1{$i}:00</option>";
                                         }
                                     ?>
-                                    <input type="hidden" name="bookPage" value="3">
                                 </select>
+                                    <input type="hidden" name="bookPage" value="3">
                             </label>
                         </div>                                                   
                     </div>

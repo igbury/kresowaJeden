@@ -8,7 +8,7 @@ RUN docker-php-ext-install mysqli
 COPY . /var/www/html/
 
 RUN rm -f /var/www/html/.env /var/www/html/vendor/.env
-
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 WORKDIR /var/www/html
 RUN composer install --no-dev --optimize-autoloader
 

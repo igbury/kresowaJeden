@@ -27,6 +27,7 @@
                 mysqli_stmt_execute($stmt);  
                 session_destroy(); 
                 session_start();
+                setcookie(session_name(), '', time()-3600);
                 $_SESSION["succ"] = "Usunięto konto.";
                 header("Location: /index.php");
                 exit();                         

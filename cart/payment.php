@@ -32,9 +32,10 @@ try{
     foreach($_SESSION['cart'] as $idPotrawy =>$ilosc){
         $idPotrawy = (int) $idPotrawy;
         $ilosc = (int) $ilosc;
-
-        $check = "SELECT id FROM menu WHERE id=$idPotrawy AND dostepne = 1";
-        $result = mysqli_query($conn, $check);
+        $stmt = mysqli_prepare($conn,"SELECT id FROM menu WHERE id=? AND dostepne = 1;");
+        mysqli_stmt_bind_param($stmt,"i", $idPotrawy);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
         if(!$result||mysqli_num_rows($result)==0){
             throw new Exception("Potrawa o id=$idPotrawy nie istnieje, lub jest niedostępna.");
         }

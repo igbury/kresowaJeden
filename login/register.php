@@ -14,6 +14,7 @@ if (!empty($_POST["name"]) && !empty($_POST["email"]) && !empty($_POST["pswd"]) 
     mysqli_stmt_bind_param($stmt, "s", $_POST["email"]);
     mysqli_stmt_execute($stmt);
     $validate = mysqli_stmt_get_result($stmt);
+    mysqli_stmt_close($stmt);
     if (strlen($_POST['name']) < 4 || strlen($_POST['name']) > 16){
         $_SESSION["error"] = "Imie musi mieścić się w przedziale 4-16 znaków.";
         header("Location: ".INDEX);
