@@ -1,78 +1,85 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Maj 09, 2026 at 08:03 PM
--- Wersja serwera: 10.4.32-MariaDB
--- Wersja PHP: 8.0.30
+-- phpMyAdmin SQL Dump – przygotowany do importu na Railway MySQL
+-- Zmiany: DROP TABLE IF EXISTS, wyłączenie FK checks, bezpieczna kolejność tabel
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET FOREIGN_KEY_CHECKS = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `kresowajeden`
---
+SET NAMES utf8mb4;
 
 -- --------------------------------------------------------
+-- Usuwanie tabel w bezpiecznej kolejności (najpierw zależne)
+-- --------------------------------------------------------
 
---
--- Struktura tabeli dla tabeli `alergeny`
---
+DROP TABLE IF EXISTS `menu_alergeny`;
+DROP TABLE IF EXISTS `oceny`;
+DROP TABLE IF EXISTS `pozycje_zamowienia`;
+DROP TABLE IF EXISTS `rezerwacje`;
+DROP TABLE IF EXISTS `zamowienia`;
+DROP TABLE IF EXISTS `menu`;
+DROP TABLE IF EXISTS `alergeny`;
+DROP TABLE IF EXISTS `klienci`;
+DROP TABLE IF EXISTS `pracownicy`;
+DROP TABLE IF EXISTS `stoliki`;
+
+-- --------------------------------------------------------
+-- Tabela: alergeny
+-- --------------------------------------------------------
 
 CREATE TABLE `alergeny` (
   `id` int(11) NOT NULL,
   `nazwa` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+INSERT INTO `alergeny` (`id`, `nazwa`) VALUES
+(1, 'Gluten'),
+(2, 'Laktoza'),
+(3, 'Jaja'),
+(4, 'Orzechy'),
+(5, 'Soja'),
+(6, 'Seler'),
+(7, 'Gorczyca'),
+(8, 'Ryby'),
+(9, 'Sezam'),
+(10, 'Dwutlenek siarki');
 
---
--- Struktura tabeli dla tabeli `klienci`
---
+ALTER TABLE `alergeny`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `alergeny`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+-- --------------------------------------------------------
+-- Tabela: klienci
+-- --------------------------------------------------------
 
 CREATE TABLE `klienci` (
   `idKlienta` int(11) NOT NULL,
-  `imie` VARCHAR(255) NOT NULL,
-  `haslo` VARCHAR(255) NOT NULL,
-  `email` VARCHAR(255) UNIQUE NOT NULL,
+  `imie` text NOT NULL,
+  `haslo` text NOT NULL,
+  `email` text NOT NULL,
   `nr_telefonu` varchar(20) NOT NULL,
   `isAdmin` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `klienci`
---
+ALTER TABLE `klienci`
+  ADD PRIMARY KEY (`idKlienta`);
 
-INSERT INTO `klienci` (`idKlienta`, `imie`, `haslo`, `email`, `nr_telefonu`, `isAdmin`) VALUES
-(6, '1', '$2y$10$bOwCAo5TC/.6D8uO1wfgw.R0NeoYEQsr1CzzenIUgB15CbY3gHHIu', 'B@op.pl', '123456789', 0),
-(7, 'a', '$2y$10$54RrkJ45lyL3JNWh3ak3hed15qJUUOxlbsYYLqeTw9sbBFZl5vaoe', 'a@op.pl', '123456789', 0);
+ALTER TABLE `klienci`
+  MODIFY `idKlienta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 -- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `menu`
---
+-- Tabela: menu
+-- --------------------------------------------------------
 
 CREATE TABLE `menu` (
   `id` int(11) NOT NULL,
   `nazwaPotrawy` text NOT NULL,
   `opis` text NOT NULL,
-  `cena` DECIMAL(10,2) NOT NULL,
+  `cena` float NOT NULL,
   `dostepne` tinyint(1) NOT NULL,
   `typ` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `menu`
---
 
 INSERT INTO `menu` (`id`, `nazwaPotrawy`, `opis`, `cena`, `dostepne`, `typ`) VALUES
 (1, 'TRADYCYJNA ZALEWAJKA ZAGŁĘBIOWSKA', 'Regionalna zupa na bazie zakwasu / żuru z ziemniakami i wędzonką', 18, 1, 'zupa'),
@@ -81,31 +88,102 @@ INSERT INTO `menu` (`id`, `nazwaPotrawy`, `opis`, `cena`, `dostepne`, `typ`) VAL
 (4, 'FRYTKI', '', 12, 1, 'dodatek'),
 (5, 'KLUSKI ŚLĄSKIE', '', 9, 1, 'dodatek'),
 (6, 'SURÓWKA', '', 8, 1, 'dodatek'),
-(7, 'SCHABOWY „ZŁOTY KLASYK”', 'Soczysty schabowy, smażony na swojskim smalcu, podany z chrupiącymi frytkami i zasmażaną kapustą', 0, 1, 'danie_glowne'),
-(8, 'TAGLIATELLE VERDE „ZIELONE WSTĘGI”', 'Grube wstęgi makaronu w aromatycznym pesto z pietruszki, nutą czosnku, białego wina, ziołami i soczystym kurczakiem', 0, 1, 'danie_glowne'),
+(7, 'SCHABOWY „ZŁOTY KLASYK"', 'Soczysty schabowy, smażony na swojskim smalcu, podany z chrupiącymi frytkami i zasmażaną kapustą', 0, 1, 'danie_glowne'),
+(8, 'TAGLIATELLE VERDE „ZIELONE WSTĘGI"', 'Grube wstęgi makaronu w aromatycznym pesto z pietruszki, nutą czosnku, białego wina, ziołami i soczystym kurczakiem', 0, 1, 'danie_glowne'),
 (9, 'CHRUPIĄCE PLACKI Z KRESOWEJ', 'Złociste placki ziemniaczane podane z kwaśną śmietaną', 0, 1, 'danie_glowne'),
 (10, 'ZŁOTY CAMEMBERT I FRYTKI', 'Panierowany ser camembert, smażony na złoto, podany z konfiturą żurawinową', 0, 1, 'danie_glowne'),
-(11, 'GRECKA „ATENY W KRESOWEJ”', 'Śródziemnomorski klasyk — chrupiące warzywa, czarne oliwki, oliwa, ser feta', 0, 1, 'salatka'),
-(12, 'HALLOUMI „SŁONECZNA WYSPA”', 'Ser halloumi, sałata (mix), granat, oliwki, ogórek, słonecznik, winegret', 0, 1, 'salatka'),
-(13, 'GRECKA „ATENY W KRESOWEJ” (dzieci)', 'Śródziemnomorski klasyk — chrupiące warzywa, czarne oliwki, oliwa, ser feta', 0, 1, 'dzieciece'),
-(14, 'HALLOUMI „SŁONECZNA WYSPA” (dzieci)', 'Ser halloumi, sałata (mix), granat, oliwki, ogórek, słonecznik, winegret', 0, 1, 'dzieciece');
+(11, 'GRECKA „ATENY W KRESOWEJ"', 'Śródziemnomorski klasyk — chrupiące warzywa, czarne oliwki, oliwa, ser feta', 0, 1, 'salatka'),
+(12, 'HALLOUMI „SŁONECZNA WYSPA"', 'Ser halloumi, sałata (mix), granat, oliwki, ogórek, słonecznik, winegret', 0, 1, 'salatka'),
+(13, 'GRECKA „ATENY W KRESOWEJ" (dzieci)', 'Śródziemnomorski klasyk — chrupiące warzywa, czarne oliwki, oliwa, ser feta', 0, 1, 'dzieciece'),
+(14, 'HALLOUMI „SŁONECZNA WYSPA" (dzieci)', 'Ser halloumi, sałata (mix), granat, oliwki, ogórek, słonecznik, winegret', 0, 1, 'dzieciece');
+
+ALTER TABLE `menu`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `menu`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 -- --------------------------------------------------------
+-- Tabela: pracownicy
+-- --------------------------------------------------------
 
---
--- Struktura tabeli dla tabeli `menu_alergeny`
---
+CREATE TABLE `pracownicy` (
+  `id` int(11) NOT NULL,
+  `imie` text NOT NULL,
+  `pensja` float NOT NULL,
+  `stanowisko` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+ALTER TABLE `pracownicy`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `pracownicy`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+-- --------------------------------------------------------
+-- Tabela: stoliki
+-- --------------------------------------------------------
+
+CREATE TABLE `stoliki` (
+  `id` int(11) NOT NULL,
+  `numerStolika` int(11) NOT NULL,
+  `zarezerwowany` tinyint(1) NOT NULL,
+  `liczbaMiejsc` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `stoliki` (`id`, `numerStolika`, `zarezerwowany`, `liczbaMiejsc`) VALUES
+(1, 1, 1, 4),
+(2, 2, 0, 2),
+(3, 3, 1, 4),
+(4, 4, 0, 6),
+(5, 5, 1, 4),
+(6, 6, 0, 2),
+(7, 7, 0, 8);
+
+ALTER TABLE `stoliki`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `stoliki`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+-- --------------------------------------------------------
+-- Tabela: zamowienia
+-- --------------------------------------------------------
+
+CREATE TABLE `zamowienia` (
+  `id` int(11) NOT NULL,
+  `idKlienta` int(11) NOT NULL,
+  `dataZamowienia` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `zamowienia`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_zamowienia_klienci` (`idKlienta`);
+
+ALTER TABLE `zamowienia`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+-- --------------------------------------------------------
+-- Tabela: menu_alergeny
+-- --------------------------------------------------------
 
 CREATE TABLE `menu_alergeny` (
   `idPotrawy` int(11) NOT NULL,
   `idAlergenu` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+INSERT INTO `menu_alergeny` (`idPotrawy`, `idAlergenu`) VALUES
+(1, 1),(1, 2),(2, 1),(2, 3),(3, 1),(4, 1),(5, 1),(5, 3),
+(7, 1),(7, 3),(8, 1),(8, 5),(9, 2),(9, 3),(10, 2),(10, 1),(11, 2),(12, 2);
 
---
--- Struktura tabeli dla tabeli `oceny`
---
+ALTER TABLE `menu_alergeny`
+  ADD KEY `fk_menualer_menu` (`idPotrawy`),
+  ADD KEY `fk_menualer_alergeny` (`idAlergenu`);
+
+-- --------------------------------------------------------
+-- Tabela: oceny
+-- --------------------------------------------------------
 
 CREATE TABLE `oceny` (
   `id` int(11) NOT NULL,
@@ -113,14 +191,20 @@ CREATE TABLE `oceny` (
   `idPotrawy` int(11) NOT NULL,
   `ocena` int(11) NOT NULL,
   `komentarz` text NOT NULL,
-  `dataOceny` timestamp NOT NULL DEFAULT current_timestamp()
+  `dataOceny` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+ALTER TABLE `oceny`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_oceny_klienci` (`idKlienta`),
+  ADD KEY `fk_oceny_menu` (`idPotrawy`);
 
---
--- Struktura tabeli dla tabeli `pozycje_zamowienia`
---
+ALTER TABLE `oceny`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+-- --------------------------------------------------------
+-- Tabela: pozycje_zamowienia
+-- --------------------------------------------------------
 
 CREATE TABLE `pozycje_zamowienia` (
   `id` int(11) NOT NULL,
@@ -129,223 +213,56 @@ CREATE TABLE `pozycje_zamowienia` (
   `ilosc` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `pracownicy`
---
-
-CREATE TABLE `pracownicy` (
-  `id` int(11) NOT NULL,
-  `imie` VARCHAR(255) NOT NULL,
-  `pensja` float NOT NULL,
-  `stanowisko` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `rezerwacje`
---
-
-CREATE TABLE `rezerwacje` (
-  `id` int(11) NOT NULL,
-  `idKlienta` int(11) NOT NULL,
-  `liczbaGosci` int(11) NOT NULL,
-  `dataRezerwacji` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `stoliki`
---
-
-CREATE TABLE `stoliki` (
-  `id` int(11) NOT NULL,
-  `numerStolika` text NOT NULL,
-  `zarezerwowany` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `zamowienia`
---
-
-CREATE TABLE `zamowienia` (
-  `id` int(11) NOT NULL,
-  `idKlienta` int(11) NOT NULL,
-  `dataZamowienia` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Indeksy dla zrzutów tabel
---
-
---
--- Indeksy dla tabeli `alergeny`
---
-ALTER TABLE `alergeny`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indeksy dla tabeli `klienci`
---
-ALTER TABLE `klienci`
-  ADD PRIMARY KEY (`idKlienta`);
-
---
--- Indeksy dla tabeli `menu`
---
-ALTER TABLE `menu`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indeksy dla tabeli `menu_alergeny`
---
-ALTER TABLE `menu_alergeny`
-  ADD KEY `fk_menualer_menu` (`idPotrawy`),
-  ADD KEY `fk_menualer_alergeny` (`idAlergenu`);
-
---
--- Indeksy dla tabeli `oceny`
---
-ALTER TABLE `oceny`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_oceny_klienci` (`idKlienta`),
-  ADD KEY `fk_oceny_menu` (`idPotrawy`);
-
---
--- Indeksy dla tabeli `pozycje_zamowienia`
---
 ALTER TABLE `pozycje_zamowienia`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_poz_zamowienia` (`idZamowienia`),
   ADD KEY `fk_poz_menu` (`idPotrawy`);
 
---
--- Indeksy dla tabeli `pracownicy`
---
-ALTER TABLE `pracownicy`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `pozycje_zamowienia`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
---
--- Indeksy dla tabeli `rezerwacje`
---
+-- --------------------------------------------------------
+-- Tabela: rezerwacje
+-- --------------------------------------------------------
+
+CREATE TABLE `rezerwacje` (
+  `id` int(11) NOT NULL,
+  `idKlienta` int(11) NOT NULL,
+  `liczbaGosci` int(11) NOT NULL,
+  `dataRezerwacji` datetime NOT NULL,
+  `numerStolika` int(11) DEFAULT NULL,
+  `zlozenieRezerwacji` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 ALTER TABLE `rezerwacje`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_rezerwacje_klienci` (`idKlienta`);
 
---
--- Indeksy dla tabeli `stoliki`
---
-ALTER TABLE `stoliki`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indeksy dla tabeli `zamowienia`
---
-ALTER TABLE `zamowienia`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_zamowienia_klienci` (`idKlienta`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `alergeny`
---
-ALTER TABLE `alergeny`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `klienci`
---
-ALTER TABLE `klienci`
-  MODIFY `idKlienta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT for table `menu`
---
-ALTER TABLE `menu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
---
--- AUTO_INCREMENT for table `oceny`
---
-ALTER TABLE `oceny`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `pozycje_zamowienia`
---
-ALTER TABLE `pozycje_zamowienia`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `pracownicy`
---
-ALTER TABLE `pracownicy`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `rezerwacje`
---
 ALTER TABLE `rezerwacje`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
---
--- AUTO_INCREMENT for table `stoliki`
---
-ALTER TABLE `stoliki`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+-- --------------------------------------------------------
+-- Klucze obce (na końcu, gdy wszystkie tabele już istnieją)
+-- --------------------------------------------------------
 
---
--- AUTO_INCREMENT for table `zamowienia`
---
-ALTER TABLE `zamowienia`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `menu_alergeny`
---
 ALTER TABLE `menu_alergeny`
-  ADD CONSTRAINT `fk_menualer_alergeny` FOREIGN KEY (`idAlergenu`) REFERENCES `alergeny` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_menualer_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_menualer_alergeny` FOREIGN KEY (`idAlergenu`) REFERENCES `alergeny` (`id`),
+  ADD CONSTRAINT `fk_menualer_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`);
 
---
--- Constraints for table `oceny`
---
 ALTER TABLE `oceny`
-  ADD CONSTRAINT `fk_oceny_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_oceny_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_oceny_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`),
+  ADD CONSTRAINT `fk_oceny_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`);
 
---
--- Constraints for table `pozycje_zamowienia`
---
 ALTER TABLE `pozycje_zamowienia`
-  ADD CONSTRAINT `fk_poz_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_poz_zamowienia` FOREIGN KEY (`idZamowienia`) REFERENCES `zamowienia` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_poz_menu` FOREIGN KEY (`idPotrawy`) REFERENCES `menu` (`id`),
+  ADD CONSTRAINT `fk_poz_zamowienia` FOREIGN KEY (`idZamowienia`) REFERENCES `zamowienia` (`id`);
 
---
--- Constraints for table `rezerwacje`
---
 ALTER TABLE `rezerwacje`
-  ADD CONSTRAINT `fk_rezerwacje_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_rezerwacje_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`);
 
---
--- Constraints for table `zamowienia`
---
 ALTER TABLE `zamowienia`
-  ADD CONSTRAINT `fk_zamowienia_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`) ON DELETE CASCADE;
-COMMIT;
+  ADD CONSTRAINT `fk_zamowienia_klienci` FOREIGN KEY (`idKlienta`) REFERENCES `klienci` (`idKlienta`);
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- --------------------------------------------------------
+SET FOREIGN_KEY_CHECKS = 1;
+COMMIT;
